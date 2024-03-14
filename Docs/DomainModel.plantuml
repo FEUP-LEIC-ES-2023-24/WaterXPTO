@@ -1,0 +1,50 @@
+class User {
+    -String : name;
+    -Date : birthDate;
+    -String : email;
+    -String : password;
+    -Nacionality : nationality;
+    -Region : region;
+
+}
+note left : nationality and region are enums
+
+class Goal {
+    -String : name;
+    -String : description;
+    -Date : deadline;
+}
+
+
+class WaterConsumption {
+    -Date : finishDate;
+    -Double : duration;
+}
+
+
+class WaterActivity {
+
+    -String : name;
+    -String : description;
+    -Double : waterFlow; 
+
+}
+
+
+class Tip {
+    
+    -String : name;
+    -String : description;
+
+}
+
+User "1" -left- "*" WaterActivity 
+
+(User, WaterActivity) .. WaterConsumption
+
+User "1" --> "*" Goal
+
+Tip "*" -- "*" User
+
+
+
