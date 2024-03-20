@@ -58,3 +58,19 @@
 - `As a Registered User`, `I want` to participate in water conservation challenges with friends and other users `so that` we can motivate each other and celebrate our collective efforts in saving water.
 
 - `As a User`, `I want` to compare my water usage with regional or national averages `so that` I understand how my consumption habits compare to others and gain motivation to further reduce my environmental impact.
+
+### Domain Model
+
+![Domain model](Docs/DomainModel.png)
+
+#### Description
+-**User**: user data;
+
+-**Tip**: set of tips to inform the users;
+
+-**Goal**: keep track of user goals;
+
+-**Water Activity**: different water activities and their respective average water flow (ex: showering, 9L per minute);
+
+-**Water Consumption**: record water consumptions for analysis (ex: John watered the plants for 30 minutes on 18/03/2024);
+
