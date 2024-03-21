@@ -1,25 +1,45 @@
-# Brainstorm Ideas
-## Water-Tracker App:
-- **personalized water usage goals**: Allow users to set personalized water usage goals and track their progress
+# _[your product name]_ Development Report
 
-- **Water Usage Insights**: Provide users with insights into their water usage patterns, including peak usage times, areas of high water consumption (e.g., showering, watering plants)
+Welcome to the documentation pages of the _[your product name]_!
 
-- **Interactive Water Saving Tips**: Offer users interactive tips and suggestions on how to save water in their daily activities
+You can find here details about the _[your product name]_, from a high-level vision to low-level implementation decisions, a kind of Software Development Report, organized by type of activities: 
 
-- **Water Impact Calculator**: Calculate the environmental impact of the water users waste based on their usage habits. For example, the app could show a comparison with water needs in Africa etc. `?`
+* [Business modeling](#Business-Modelling) 
+  * [Product Vision](#Product-Vision)
+  * [Features and Assumptions](#Features-and-Assumptions)
+  * [Elevator Pitch](#Elevator-pitch)
+* [Requirements](#Requirements)
+  * [User stories](#User-stories)
+  * [Domain model](#Domain-model)
+* [Architecture and Design](#Architecture-And-Design)
+  * [Logical architecture](#Logical-Architecture)
+  * [Physical architecture](#Physical-Architecture)
+  * [Vertical prototype](#Vertical-Prototype)
+* [Project management](#Project-Management)
 
-- **Social Features**: Leaderboard, sharing acheivements etc...
 
-- **Localized Water Conservation Tips (If we want to introduce complexity to the app)**: introduce localized water saving tips depending on the geographic location and local water issues (ex.: user do alentejo recebe informações acerca da escassez de água na regiao ao contrario de user em regiao que nao seja de zona de seca `?`)
+Please contact us!
 
-### Project Vision
+Thank you!
 
-- "For environmentally conscious individuals who aim for a sustainable lifestyle. WaterXPTO provides real-time monitoring, personalized insights, and actionable tips to reduce water consumption effortlessly. Track usage, receive tailored recommendations, and contribute to global conservation efforts with WaterXPTO.
+### Team Members
+Duarte Ribeiro Lagoela - up202205629@up.pt
+Gonçalo Joaquim Vale Remelhe - up202205318@up.pt
+José António Santos Costa - up202004823@up.pt
+Rafael Costa Pires - up202208602@up.pt
+Sara Isabel Borges da Silva - up202007248@up.pt
 
-### Functionalities
+---
+## Business Modelling
+
+### Product Vision
+
+For environmentally conscious individuals who aim for a sustainable lifestyle. [App Name] provides real-time monitoring, personalized insights, and actionable tips to reduce water consumption effortlessly. Track usage, receive tailored recommendations, and contribute to global conservation efforts with [App Name].
+
+### Features and Assumptions
 
 #### Real-time Water Usage Tracking:
-- Enable users to input and track their water usage data manually (via timers `?`).
+- Enable users to input and track their water usage data manually (via timer).
 
 #### Personalized Water Usage Insights:
 - Analyze users' water consumption patterns to provide personalized insights (potential areas for improvement).
@@ -27,14 +47,14 @@
 
 #### Water Saving Tips and Recommendations:
 
-- Offer a library of water-saving tips and recommendations ( based on users' usage patterns `?`) (daily tips notification).
+- Offer a library of water-saving tips and recommendations (based on users' usage patterns) (daily tips notification).
 
 #### Notifications and Reminders:
 
-- Send push notifications and reminders to users based on their water usage habits and conservation goals (timers when showring, washing dishes ... `?`).
+- Send push notifications and reminders to users based on their water usage habits and conservation goals (timers when showring, washing dishes ...).
 - Allow users to customize notification settings based on their preferences.
 
-#### Water Conservation Challenges `?`:
+#### Water Conservation Challenges:
 
 - Create challenges and competitions within the app to motivate users to save water.
 - Allow users to join challenges, track their progress, and compete with friends or other users.
@@ -43,7 +63,19 @@
 
 - Implement a feedback mechanism within the app for users to submit suggestions, report issues, and provide overall feedback on their experience.
 
-### User-Stories
+
+### Elevator Pitch
+Draft a small text to help you quickly introduce and describe your product in a short time (lift travel time ~90 seconds) and a few words (~800 characters), a technique usually known as elevator pitch.
+
+Take a look at the following links to learn some techniques:
+* [Crafting an Elevator Pitch](https://www.mindtools.com/pages/article/elevator-pitch.htm)
+* [The Best Elevator Pitch Examples, Templates, and Tactics - A Guide to Writing an Unforgettable Elevator Speech, by strategypeak.com](https://strategypeak.com/elevator-pitch-examples/)
+* [Top 7 Killer Elevator Pitch Examples, by toggl.com](https://blog.toggl.com/elevator-pitch-examples/)
+
+
+## Requirements
+
+### User stories
 
 - `As a User`, `I want` to track my daily water usage in real-time `so that` I can become more aware of my consumption habits and make informed decisions to reduce waste.
 
@@ -59,18 +91,60 @@
 
 - `As a User`, `I want` to compare my water usage with regional or national averages `so that` I understand how my consumption habits compare to others and gain motivation to further reduce my environmental impact.
 
-### Domain Model
+### Domain model
 
 ![Domain model](Docs/DomainModel.png)
 
-#### Description
--**User**: user data;
+Each user can set as many goals as he wants and recieve different tips. Also, an user can register an activity and time its duration.
 
--**Tip**: set of tips to inform the users;
 
--**Goal**: keep track of user goals;
+## Architecture and Design
+The architecture of a software system encompasses the set of key decisions about its overall organization. 
 
--**Water Activity**: different water activities and their respective average water flow (ex: showering, 9L per minute);
+A well written architecture document is brief but reduces the amount of time it takes new programmers to a project to understand the code to feel able to make modifications and enhancements.
 
--**Water Consumption**: record water consumptions for analysis (ex: John watered the plants for 30 minutes on 18/03/2024);
+To document the architecture requires describing the decomposition of the system in their parts (high-level components) and the key behaviors and collaborations between them. 
 
+In this section you should start by briefly describing the overall components of the project and their interrelations. You should also describe how you solved typical problems you may have encountered, pointing to well-known architectural and design patterns, if applicable.
+
+### Logical architecture
+The purpose of this subsection is to document the high-level logical structure of the code (Logical View), using a UML diagram with logical packages, without the worry of allocating to components, processes or machines.
+
+It can be beneficial to present the system in a horizontal decomposition, defining layers and implementation concepts, such as the user interface, business logic and concepts.
+
+Example of _UML package diagram_ showing a _logical view_ of the Eletronic Ticketing System (to be accompanied by a short description of each package):
+
+![LogicalView](https://user-images.githubusercontent.com/9655877/160585416-b1278ad7-18d7-463c-b8c6-afa4f7ac7639.png)
+
+### Physical architecture
+The goal of this subsection is to document the high-level physical structure of the software system (machines, connections, software components installed, and their dependencies) using UML deployment diagrams (Deployment View) or component diagrams (Implementation View), separate or integrated, showing the physical structure of the system.
+
+It should describe also the technologies considered and justify the selections made. Examples of technologies relevant for ESOF are, for example, frameworks for mobile applications (such as Flutter).
+
+Example of _UML deployment diagram_ showing a _deployment view_ of the Eletronic Ticketing System (please notice that, instead of software components, one should represent their physical/executable manifestations for deployment, called artifacts in UML; the diagram should be accompanied by a short description of each node and artifact):
+
+![DeploymentView](https://user-images.githubusercontent.com/9655877/160592491-20e85af9-0758-4e1e-a704-0db1be3ee65d.png)
+
+### Vertical prototype
+To help on validating all the architectural, design and technological decisions made, we usually implement a vertical prototype, a thin vertical slice of the system integrating as much technologies we can.
+
+In this subsection please describe which feature, or part of it, you have implemented, and how, together with a snapshot of the user interface, if applicable.
+
+At this phase, instead of a complete user story, you can simply implement a small part of a feature that demonstrates thay you can use the technology, for example, show a screen with the app credits (name and authors).
+
+
+## Project management
+Software project management is the art and science of planning and leading software projects, in which software projects are planned, implemented, monitored and controlled.
+
+In the context of ESOF, we recommend each team to adopt a set of project management practices and tools capable of registering tasks, assigning tasks to team members, adding estimations to tasks, monitor tasks progress, and therefore being able to track their projects.
+
+Common practices of managing iterative software development are: backlog management, release management, estimation, iteration planning, iteration development, acceptance tests, and retrospectives.
+
+You can find below information and references related with the project management in our team: 
+
+* Backlog management: Product backlog and Sprint backlog in a [Github Projects board](https://github.com/orgs/FEUP-LEIC-ES-2023-24/projects/64);
+* Release management: [v0](#), v1, v2, v3, ...;
+* Sprint planning and retrospectives: 
+  * plans: screenshots of Github Projects board at begin and end of each iteration;
+  * retrospectives: meeting notes in a document in the repository;
+ 
