@@ -34,7 +34,7 @@ Sara Isabel Borges da Silva - up202007248@up.pt
 
 ### Product Vision
 
-For environmentally conscious individuals who aim for a sustainable lifestyle. [App Name] provides real-time monitoring, personalized insights, and actionable tips to reduce water consumption effortlessly. Track usage, receive tailored recommendations, and contribute to global conservation efforts with [App Name].
+For environmentally conscious individuals who aim for a sustainable lifestyle. WaterXPTO provides real-time monitoring, personalized insights, and actionable tips to reduce water consumption effortlessly. Track usage, receive tailored recommendations, and contribute to global conservation efforts with WaterXPTO.
 
 ### Features and Assumptions
 
@@ -91,7 +91,11 @@ Take a look at the following links to learn some techniques:
 
 - `As a User`, `I want` to compare my water usage with regional or national averages `so that` I understand how my consumption habits compare to others and gain motivation to further reduce my environmental impact.
 
-### Domain model
+- `As an Unregistered User`, `I want` to be able to have access to most of the app’s features `so that` I don’t have to login.
+
+- `As an Unregistered User`, `I want` to be able to create an account `so that` I can keep data on multiple devices.
+
+### Domain Model
 
 ![Domain model](Docs/DomainModel.png)
 
