@@ -59,6 +59,10 @@
 
 - `As a User`, `I want` to compare my water usage with regional or national averages `so that` I understand how my consumption habits compare to others and gain motivation to further reduce my environmental impact.
 
+- `As an Unregistered User`, `I want` to be able to have access to most of the app’s features `so that` I don’t have to login.
+
+- `As an Unregistered User`, `I want` to be able to create an account `so that` I can keep data on multiple devices.
+
 ### Domain Model
 
 ![Domain model](Docs/DomainModel.png)
