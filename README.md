@@ -12,9 +12,9 @@
 
 - **Localized Water Conservation Tips (If we want to introduce complexity to the app)**: introduce localized water saving tips depending on the geographic location and local water issues (ex.: user do alentejo recebe informações acerca da escassez de água na regiao ao contrario de user em regiao que nao seja de zona de seca `?`)
 
-### Project Vision Template
+### Project Vision
 
-- "**FOR** environmentally conscious individuals **WHO** aim for a sustainable lifestyle. [App Name] provides real-time monitoring, personalized insights, and actionable tips to reduce water consumption effortlessly. Track usage, receive tailored recommendations, and contribute to global conservation efforts with [App Name].
+- "For environmentally conscious individuals who aim for a sustainable lifestyle. WaterXPTO provides real-time monitoring, personalized insights, and actionable tips to reduce water consumption effortlessly. Track usage, receive tailored recommendations, and contribute to global conservation efforts with WaterXPTO.
 
 ### Functionalities
 
