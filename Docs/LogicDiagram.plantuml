@@ -1,0 +1,52 @@
+@startuml
+
+package APPLICATION {
+
+    package Logic {
+        package Statistics {
+
+        }
+        
+        package WaterTimer {
+        
+
+        }
+
+        package GoalSystem {
+
+        }
+
+        package TipSystem {
+            
+        }
+
+
+    }
+
+    package GUI {
+
+    }
+
+
+    package InternalDatabase {
+
+    }
+
+
+}
+
+package ExeternalServices {
+    package Database { 
+        
+    }
+}
+
+
+GUI .down.> Logic
+
+Statistics <.l. Database
+WaterTimer .r.> Database
+
+Logic .down.> InternalDatabase
+
+@enduml

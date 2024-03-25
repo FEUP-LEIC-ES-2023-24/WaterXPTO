@@ -38,7 +38,7 @@ class Tip {
 
 }
 
-User "*" -left- "1" WaterActivity 
+User "*" -left- "*" WaterActivity 
 
 (User, WaterActivity) .. WaterConsumption
 
