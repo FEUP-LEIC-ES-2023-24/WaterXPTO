@@ -44,8 +44,8 @@ package ExeternalServices {
 
 GUI .down.> Logic
 
-Statistics <.l. Database
-WaterTimer .r.> Database
+
+Logic <.right.> Database
 
 Logic .down.> InternalDatabase
 
