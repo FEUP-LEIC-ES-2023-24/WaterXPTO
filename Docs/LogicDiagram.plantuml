@@ -1,9 +1,9 @@
 @startuml
 
 frame "Logical View" {
-    package APPLICATION {
+    package "WaterXPTO APPLICATION" {
 
-    package Logic {
+    package "WaterXPTO Logic" {
         package Statistics {
 
         }
@@ -38,21 +38,21 @@ frame "Logical View" {
 
 package ExeternalServices {
     
-    package Database { 
+    package "Firestore Database" { 
         
     }
-    package Firebase {
+    package "Firebase authentication" {
 
     }
 
 }
 }
 
-GUI .down.> Logic
+GUI .down.> "WaterXPTO Logic"
 
-Logic <.right.> Database
-Logic <.right.> Firebase
+"WaterXPTO Logic" <.right.> "Firestore Database"
+"WaterXPTO Logic" <.right.> "Firebase authentication"
 
-Logic .down.> InternalDatabase
+"WaterXPTO Logic" .down.> InternalDatabase
 
 @enduml

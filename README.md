@@ -113,23 +113,23 @@ In this section you should start by briefly describing the overall components of
 
 ### Logical architecture
 
+The main focus of the Logical Architecture is to represent the various layers/packages that belong to our app.
+
+Our application (WaterXPTO) contains the majority of the functionalities. It is divided in three subsections: `GUI` (`G`raphical `U`ser `I`nterface), the application's `Logic` and the WaterXPTO `Database`, which contains data storage. Inside the `Logic` package there are more sections: `TipSystem`, `WaterTimer`, `Statistics` and `GoalSystem`. Their responsability is managing the application tips, the duration of an activity, data manipulation and goal's management, respectively.
+
+The External Services includes the dependencies in our app, in this case, `Firestore` and `Firebase`.
+
 ![LogicalView](Docs/LogicalDiagram.png)
 
 ### Physical architecture
-The goal of this subsection is to document the high-level physical structure of the software system (machines, connections, software components installed, and their dependencies) using UML deployment diagrams (Deployment View) or component diagrams (Implementation View), separate or integrated, showing the physical structure of the system.
 
-It should describe also the technologies considered and justify the selections made. Examples of technologies relevant for ESOF are, for example, frameworks for mobile applications (such as Flutter).
+Following the Logical Architecture, with the same dependencies we can elaborate an Physical Architecture represented in a Deployment Diagram. The dependencies used were Firebase (used for authentication) and Firestore (used for storage).
 
-Example of _UML deployment diagram_ showing a _deployment view_ of the Eletronic Ticketing System (please notice that, instead of software components, one should represent their physical/executable manifestations for deployment, called artifacts in UML; the diagram should be accompanied by a short description of each node and artifact):
-
-![DeploymentView](Docs/PhysicalDiagram.png)
+![DeploymentView](Docs/DeploymentDiagram.png)
 
 ### Vertical prototype
-To help on validating all the architectural, design and technological decisions made, we usually implement a vertical prototype, a thin vertical slice of the system integrating as much technologies we can.
 
-In this subsection please describe which feature, or part of it, you have implemented, and how, together with a snapshot of the user interface, if applicable.
-
-At this phase, instead of a complete user story, you can simply implement a small part of a feature that demonstrates thay you can use the technology, for example, show a screen with the app credits (name and authors).
+At the moment, we have partially implemented some features and some pages, such the login screen and the main menu. In the login screen, the user can choose between inserting his data or skip the login phase if the user do not have an account. The main menu has the buttons for the water activities. However, for now these buttons are functionless.
 
 
 ## Project management

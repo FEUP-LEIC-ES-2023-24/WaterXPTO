@@ -4,12 +4,8 @@
 frame "Deployment View" {
 
   node "Firebase Server Machine" as firebase{
-    database "Firebase Database" as firebasedb
+    database "Firestore Database" as firebasedb
     artifact "Firebase authentication" as firebaseauth
-  }
-
-  node "Database" as database{
-    database "Database (MySQL)" as db
   }
 
 
@@ -20,13 +16,12 @@ frame "Deployment View" {
   }
 }
 
-smartphone -- database
+
 smartphone -- firebase
 gui -[dashed]-|> logic
 logic -[dashed]-|>local
 logic -[dashed]-|>firebasedb
 logic -[dashed]-|>firebaseauth
-logic -[dashed]-|>db
 
 firebasedb -[hidden]- firebaseauth
 
