@@ -1,6 +1,7 @@
 @startuml
 
-package APPLICATION {
+frame "Logical View" {
+    package APPLICATION {
 
     package Logic {
         package Statistics {
@@ -36,16 +37,21 @@ package APPLICATION {
 }
 
 package ExeternalServices {
+    
     package Database { 
         
     }
-}
+    package Firebase {
 
+    }
+
+}
+}
 
 GUI .down.> Logic
 
-
 Logic <.right.> Database
+Logic <.right.> Firebase
 
 Logic .down.> InternalDatabase
 

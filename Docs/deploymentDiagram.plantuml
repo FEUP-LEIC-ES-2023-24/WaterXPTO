@@ -1,0 +1,33 @@
+@startuml
+
+
+frame "Deployment View" {
+
+  node "Firebase Server Machine" as firebase{
+    database "Firebase Database" as firebasedb
+    artifact "Firebase authentication" as firebaseauth
+  }
+
+  node "Database" as database{
+    database "Database (MySQL)" as db
+  }
+
+
+  node "Mobile Device" as smartphone{
+    artifact "WaterXPTO Application (Flutter)" as gui
+    artifact "WaterXPTO Logic Service (Flutter)" as logic
+    database "Local Storage" as local
+  }
+}
+
+smartphone -- database
+smartphone -- firebase
+gui -[dashed]-|> logic
+logic -[dashed]-|>local
+logic -[dashed]-|>firebasedb
+logic -[dashed]-|>firebaseauth
+logic -[dashed]-|>db
+
+firebasedb -[hidden]- firebaseauth
+
+@enduml
