@@ -131,6 +131,8 @@ Following the Logical Architecture, with the same dependencies we can elaborate 
 
 At the moment, we have partially implemented some features and some pages, such the login screen and the main menu. In the login screen, the user can choose between inserting his data or skip the login phase if the user do not have an account. The main menu has the buttons for the water activities. However, for now these buttons are functionless.
 
+![VerticalPrototype](Docs/verticalPrototype.gif)
+
 
 ## Project management
 Software project management is the art and science of planning and leading software projects, in which software projects are planned, implemented, monitored and controlled.
