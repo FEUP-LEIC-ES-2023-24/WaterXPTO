@@ -99,7 +99,7 @@ Take a look at the following links to learn some techniques:
 
 ![Domain model](Docs/DomainModel.png)
 
-Each user can set as many goals as he wants and recieve different tips. Also, an user can register an activity and time its duration.
+Each user can set as many goals as he wants and recieve different tips. Also, a user can register an activity and time its duration.
 
 
 ## Architecture and Design
