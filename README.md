@@ -152,6 +152,7 @@ You can find below information and references related with the project managemen
 
 Sprint 1
 
-![image](https://github.com/FEUP-LEIC-ES-2023-24/2LEIC08T2/assets/145542200/e3216f39-fd6e-48dc-a50e-b63c93443a33)
+![image](https://github.com/FEUP-LEIC-ES-2023-24/2LEIC08T2/assets/145542200/dbd5ee54-ce75-4dad-911f-f4ccbc8331b0)
+
 
 
