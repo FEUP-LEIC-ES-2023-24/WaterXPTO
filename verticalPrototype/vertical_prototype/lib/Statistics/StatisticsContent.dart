@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-
-
 class StatisticsContent extends StatelessWidget {
 
   final List<double> liters = [10, 35, 42, 53, 28, 41, 60];
@@ -116,7 +114,7 @@ class StatisticsContent extends StatelessWidget {
                     child: AspectRatio(
                       aspectRatio: 1,
                       // Adjust the height as needed
-                      child: WeekChart(liters: liters),
+                      child: Padding(padding: EdgeInsets.all(20), child: MonthChart(),),
                     ),
                   ),
                 ),
@@ -134,7 +132,7 @@ class StatisticsContent extends StatelessWidget {
                     child: AspectRatio(
                       aspectRatio: 1,
                       // Adjust the height as needed
-                      child: WeekChart(liters: liters),
+                      child: Padding(padding: EdgeInsets.all(20), child: MonthChart(),),
                     ),
                   ),
                 ),
