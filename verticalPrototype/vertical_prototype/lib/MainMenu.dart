@@ -1,9 +1,15 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'NotificationController.dart';
 
-class MainMenu extends StatelessWidget {
+class MainMenu extends StatefulWidget {
   const MainMenu({super.key});
 
+  @override
+  State<MainMenu> createState() => _MainMenuState();
+}
+
+class _MainMenuState extends State<MainMenu> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,6 +51,8 @@ class MainMenu extends StatelessWidget {
   }
 }
 
+
+
 class CustomButton extends StatelessWidget {
   final String text;
 
@@ -53,7 +61,12 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {}, // Placeholder function, change as needed
+      onPressed: () {
+          //Apenas para teste
+          AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+            if (!isAllowed) {NotificationController.requestNotificationPermission(context);}
+          });
+        },
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.blue,
         padding: EdgeInsets.all(15.0),
