@@ -149,3 +149,9 @@ You can find below information and references related with the project managemen
   * plans: screenshots of Github Projects board at begin and end of each iteration;
   * retrospectives: meeting notes in a document in the repository;
  
+
+Sprint 1
+
+![image](https://github.com/FEUP-LEIC-ES-2023-24/2LEIC08T2/assets/145542200/e3216f39-fd6e-48dc-a50e-b63c93443a33)
+
+
