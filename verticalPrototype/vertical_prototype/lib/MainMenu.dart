@@ -2,6 +2,7 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'Statistics/StatisticsContent.dart';
 import 'NotificationController.dart';
+import 'dart:async';
 
 class MainMenu extends StatefulWidget {
   const MainMenu({super.key});
@@ -108,11 +109,17 @@ class CustomButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-          //Apenas para teste
+        if (text == 'Timer') {
+          _showTimerDialog(context);
+        } else {
+          // Handle other button clicks here
           AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
-            if (!isAllowed) {AwesomeNotifications().requestPermissionToSendNotifications();}
+            if (!isAllowed) {
+              AwesomeNotifications().requestPermissionToSendNotifications();
+            }
           });
-        },
+        }
+      },
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.blue,
         padding: EdgeInsets.all(15.0),
@@ -126,4 +133,151 @@ class CustomButton extends StatelessWidget {
       ),
     );
   }
+
+  void _showTimerDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return TimerDialog();
+      },
+    );
+  }
 }
+
+
+
+//------------ Timer Dialog ---------------------
+
+class TimerDialog extends StatefulWidget {
+  @override
+  _TimerDialogState createState() => _TimerDialogState();
+}
+
+class _TimerDialogState extends State<TimerDialog> {
+  bool _timerRunning = false;
+  bool _timerPaused = false;
+  int _timerCount = 0; // in seconds
+  double _waterSpent = 0.0; // in liters
+
+  String _selectedUsageType = 'Shower';
+  List<String> _usageTypes = ['Shower', 'Washing Dishes', 'Hands', 'Plants', 'Clothes'];
+  Map<String, double> _usageRates = {
+    'Shower': 9.5, // Liters per minute
+    'Washing Dishes': 5.0,
+    'Hands': 2.0,
+    'Plants': 0.5,
+    'Clothes': 15.0,
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    //format time to be like 1m30s
+    String formattedTime;
+    if (_timerCount >= 60) {
+      int minutes = _timerCount ~/ 60;
+      int seconds = _timerCount % 60;
+      formattedTime = '$minutes minutes $seconds seconds';
+    } else {
+      formattedTime = '$_timerCount seconds';
+    }
+
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20.0),
+      ),
+      child: Container(
+        padding: EdgeInsets.all(20.0),
+        height: MediaQuery.of(context).size.height * 0.75,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              'Timer: $formattedTime',
+              style: TextStyle(fontSize: 18),
+            ),
+            SizedBox(height: 20),
+            DropdownButtonFormField<String>(
+              value: _selectedUsageType,
+              items: _usageTypes.map((String type) {
+                return DropdownMenuItem<String>(
+                  value: type,
+                  child: Text(type),
+                );
+              }).toList(),
+              onChanged: (String? newValue) {
+                setState(() {
+                  _selectedUsageType = newValue!;
+                });
+              },
+              decoration: InputDecoration(
+                labelText: 'Usage Type',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    _startOrResumeTimer();
+                  },
+                  child: Text(_timerRunning && !_timerPaused ? 'Pause' : 'Start'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    _stopTimer();
+                  },
+                  child: Text('Stop'),
+                ),
+              ],
+            ),
+            SizedBox(height: 20),
+            Text(
+              'Water Spent: ${_waterSpent.toStringAsFixed(1)} liters', // Round to 1 decimal unit
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold), // Bigger and bold font
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _startOrResumeTimer() {
+    setState(() {
+      if (!_timerRunning) {
+        _timerRunning = true;
+        _timerPaused = false;
+        _startTimer();
+      } else {
+        _timerPaused = !_timerPaused;
+        if (!_timerPaused) {
+          _startTimer();
+        }
+      }
+    });
+  }
+
+  void _startTimer() {
+    const oneSecond = Duration(seconds: 1);
+    Timer.periodic(oneSecond, (timer) {
+      setState(() {
+        if (!_timerPaused) {
+          _timerCount++;
+          _waterSpent = (_usageRates[_selectedUsageType] ?? 0.0) * _timerCount / 60.0; // Conversion from seconds to minutes
+        }
+      });
+    });
+  }
+
+  void _stopTimer() {
+    setState(() {
+      _timerRunning = false;
+      _timerPaused = true;
+      _timerCount = 0;
+      _waterSpent = 0.0;
+    });
+  }
+}
+
+

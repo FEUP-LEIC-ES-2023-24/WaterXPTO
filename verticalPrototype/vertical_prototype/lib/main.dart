@@ -7,6 +7,7 @@ import 'BackgroundServiceController.dart';
 
 
 
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await BackgroundServiceController.initializeBackgroundService();
