@@ -47,7 +47,7 @@ class _YearchartState extends State<Yearchart> {
                 border: const Border(bottom: BorderSide(), left: BorderSide())),
             gridData: FlGridData(show: false),
             titlesData: FlTitlesData(
-              bottomTitles: AxisTitles(sideTitles: _groupSideTitles()),
+              bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
               leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
               topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
               rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
