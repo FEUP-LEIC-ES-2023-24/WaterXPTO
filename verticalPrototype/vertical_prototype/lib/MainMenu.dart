@@ -1,7 +1,7 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
-
 import 'Statistics/StatisticsContent.dart';
-
+import 'NotificationController.dart';
 
 class MainMenu extends StatefulWidget {
   const MainMenu({super.key});
@@ -72,9 +72,9 @@ class _HomeContentState extends State<HomeContent> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Image.asset(
-            'assets/img/WaterDrop2.png', // Assuming the image file is in the assets folder
-            width: 200, // Adjust width as needed
-            height: 200, // Adjust height as needed
+            'assets/img/WaterDrop2.png',
+            width: 200,
+            height: 200,
           ),
           SizedBox(height: 20),
           GridView.count(
@@ -107,7 +107,12 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {}, // Placeholder function, change as needed
+      onPressed: () {
+          //Apenas para teste
+          AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+            if (!isAllowed) {AwesomeNotifications().requestPermissionToSendNotifications();}
+          });
+        },
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.blue,
         padding: EdgeInsets.all(15.0),
