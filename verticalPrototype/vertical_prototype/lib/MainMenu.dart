@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'Statistics/StatisticsContent.dart';
@@ -65,65 +67,102 @@ class HomeContent extends StatefulWidget {
 }
 
 class _HomeContentState extends State<HomeContent> {
+  final List<String> messages = [
+    "Turn off faucets tightly after use, fix leaks promptly, and opt for shorter showers. Small actions can yield big water savings over time.",
+    "Reuse water from washing fruits/veggies to water plants. Every drop counts!",
+    "Choose drought-resistant plants for your garden to minimize water usage. Sustainable landscaping saves resources.",
+    "Use a broom instead of a hose to clean driveways and sidewalks. It saves water and energy. Small changes make a big impact!",
+    "Collect rainwater in barrels for outdoor use. It's eco-friendly and reduces reliance on municipal water sources.",
+    "Use a pool cover to reduce evaporation and keep your pool clean. It's an easy way to save water and energy.",
+    "Use a dishwasher instead of hand-washing dishes to save water. It's a convenient way to conserve resources.",
+    "Install a dual-flush toilet to reduce water usage. It's an eco-friendly way to save water and money.",
+  ];
+
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.asset(
-            'assets/img/WaterDrop2.png',
-            width: 200,
-            height: 200,
-          ),
-          SizedBox(height: 20),
-          GridView.count(
-            shrinkWrap: true,
-            crossAxisCount: 3,
-            crossAxisSpacing: 10.0,
-            mainAxisSpacing: 10.0,
-            padding: EdgeInsets.all(10.0),
-            children: [
-              CustomButton(text: 'Shower'),
-              CustomButton(text: 'Hands'),
-              CustomButton(text: 'Dishes'),
-              CustomButton(text: 'Plants'),
-              CustomButton(text: 'Clothes'),
-              CustomButton(text: 'Timer'),
-            ],
-          ),
-        ],
-      ),
+    final Random random = Random();
+    final String message = messages[random.nextInt(messages.length)];
+
+    return Scaffold(
+        body: Column(
+          children: <Widget>[
+            Container(
+              alignment: Alignment.topCenter,
+              margin: EdgeInsets.only(top: 0.0),
+              child: Container(
+                width: 353.0,
+                height: 80.0,
+                decoration: BoxDecoration(
+                  color: Color(int.parse('0xFF027088')),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(10.0),
+                  child: Text(
+                    message,
+                    textAlign: TextAlign.justify,
+                    style: TextStyle(
+                      color: Color(int.parse('0xFFFFFFFF')),
+                      fontSize: calculateFontSize(message),
+                      fontFamily: 'Montserrat',
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Image.asset('assets/img/WaterDrop2.png', width: 350.0, height: 350.0),
+            Text('20L today', style: TextStyle(fontSize: 40.0, fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.black)),
+            SizedBox(height: 10.0),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: GridView.count(
+                  crossAxisCount: 3,
+                  childAspectRatio: 1.3,   //Tamanho
+                  mainAxisSpacing: 10,     //Espaçamento vertical
+                  crossAxisSpacing: 10,    //Espaçamento horizontal
+                  children: <Widget>[
+                    customButton(Icons.bathtub_outlined, 'Shower'),
+                    customButton(Icons.clean_hands_outlined, 'Hands'),
+                    customButton(Icons.bakery_dining_rounded, 'Dishes'),
+                    customButton(Icons.local_florist_outlined, 'Plants'),
+                    customButton(Icons.local_laundry_service_outlined, 'Clothes'),
+                    customButton(Icons.access_alarms_rounded, 'Timer'),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        )
     );
   }
 }
 
-
-class CustomButton extends StatelessWidget {
-  final String text;
-
-  const CustomButton({Key? key, required this.text}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {
-          //Apenas para teste
-          AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
-            if (!isAllowed) {AwesomeNotifications().requestPermissionToSendNotifications();}
-          });
-        },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.blue,
-        padding: EdgeInsets.all(15.0),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
-        ),
+Widget customButton(IconData icon, String label) {
+  return ElevatedButton(
+    //Nada por agora
+    onPressed: () {},
+    style: ElevatedButton.styleFrom(
+      foregroundColor: Colors.white,
+      backgroundColor: Color(int.parse('0xFF027088')),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
       ),
-      child: Text(
-        text,
-        style: TextStyle(fontSize: 16),
-      ),
-    );
-  }
+    ),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Icon(icon, size: 18),
+        Text(label),
+      ],
+    ),
+  );
+}
+
+
+double calculateFontSize(String message) {
+  if (message.length > 125) {return 13.0;}
+  if (message.length >= 100) {return 14.5;}
+  if (message.length >= 75) {return 16.0;}
+  return 20.0;
 }
