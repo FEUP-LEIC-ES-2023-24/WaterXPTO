@@ -4,7 +4,8 @@ import 'dart:async';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'NotificationController.dart';
 import 'BackgroundServiceController.dart';
-
+import 'package:provider/provider.dart';
+import 'WaterSpentNotifier.dart';
 
 
 
@@ -12,7 +13,12 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await BackgroundServiceController.initializeBackgroundService();
   await NotificationController.initializeNotifications();
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => WaterSpentNotifier(waterSpent: 0.0),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {

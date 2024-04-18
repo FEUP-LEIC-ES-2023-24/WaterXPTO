@@ -1,7 +1,9 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'Statistics/StatisticsContent.dart';
 import 'dart:async';
+import 'WaterSpentNotifier.dart';
 
 class MainMenu extends StatefulWidget {
   const MainMenu({super.key});
@@ -109,7 +111,11 @@ class _HomeContentState extends State<HomeContent> {
               ),
             ),
             Image.asset('assets/img/WaterDrop2.png', width: 350.0, height: 350.0),
-            Text('20L today', style: TextStyle(fontSize: 40.0, fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.black)),
+            Consumer<WaterSpentNotifier>(
+              builder: (context, waterSpentNotifier, child) {
+                return Text('${double.parse(waterSpentNotifier.waterSpent.toStringAsFixed(2))} L today', style: TextStyle(fontSize: 40.0, fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.black));
+              },
+            ),
             SizedBox(height: 10.0),
             Expanded(
               child: Padding(
@@ -161,7 +167,6 @@ class _TimerDialogState extends State<TimerDialog> {
 
   @override
   Widget build(BuildContext context) {
-    //format time to be like 1m30s
     String formattedTime;
     if (_timerCount >= 60) {
       int minutes = _timerCount ~/ 60;
@@ -224,8 +229,8 @@ class _TimerDialogState extends State<TimerDialog> {
             ),
             SizedBox(height: 20),
             Text(
-              'Water Spent: ${_waterSpent.toStringAsFixed(1)} liters', // Round to 1 decimal unit
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold), // Bigger and bold font
+              'Water Spent: ${_waterSpent.toStringAsFixed(1)} liters',
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -246,7 +251,7 @@ class _TimerDialogState extends State<TimerDialog> {
         if (!_timerPaused) {
           _startTimer();
         } else {
-          _timer!.cancel(); // Cancel the existing timer if paused
+          _timer!.cancel();
         }
       }
     });
@@ -258,7 +263,7 @@ class _TimerDialogState extends State<TimerDialog> {
       setState(() {
         if (!_timerPaused) {
           _timerCount++;
-          _waterSpent = (_usageRates[_selectedUsageType] ?? 0.0) * _timerCount / 60.0; // Conversion from seconds to minutes
+          _waterSpent = (_usageRates[_selectedUsageType] ?? 0.0) * _timerCount / 60.0;
         }
       });
     });
@@ -268,9 +273,10 @@ class _TimerDialogState extends State<TimerDialog> {
     setState(() {
       _timerRunning = false;
       _timerPaused = true;
+      WaterSpentNotifier.of(context).updateWaterSpent(_waterSpent);
       _timerCount = 0;
       _waterSpent = 0.0;
-      _timer?.cancel(); // Cancel the timer when stop button is pressed
+      _timer?.cancel();
     });
   }
 }
