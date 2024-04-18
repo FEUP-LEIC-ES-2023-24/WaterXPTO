@@ -233,6 +233,8 @@ class _TimerDialogState extends State<TimerDialog> {
     );
   }
 
+  Timer? _timer;
+
   void _startOrResumeTimer() {
     setState(() {
       if (!_timerRunning) {
@@ -243,6 +245,8 @@ class _TimerDialogState extends State<TimerDialog> {
         _timerPaused = !_timerPaused;
         if (!_timerPaused) {
           _startTimer();
+        } else {
+          _timer!.cancel(); // Cancel the existing timer if paused
         }
       }
     });
@@ -250,7 +254,7 @@ class _TimerDialogState extends State<TimerDialog> {
 
   void _startTimer() {
     const oneSecond = Duration(seconds: 1);
-    Timer.periodic(oneSecond, (timer) {
+    _timer = Timer.periodic(oneSecond, (timer) {
       setState(() {
         if (!_timerPaused) {
           _timerCount++;
@@ -266,10 +270,10 @@ class _TimerDialogState extends State<TimerDialog> {
       _timerPaused = true;
       _timerCount = 0;
       _waterSpent = 0.0;
+      _timer?.cancel(); // Cancel the timer when stop button is pressed
     });
   }
 }
-
 //---------------------------------------------------------
 
 
