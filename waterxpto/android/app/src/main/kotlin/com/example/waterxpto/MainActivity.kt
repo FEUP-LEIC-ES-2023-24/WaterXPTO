@@ -1,4 +1,4 @@
-package com.example.vertical_prototype
+package com.example.waterxpto
 
 import io.flutter.embedding.android.FlutterActivity
 

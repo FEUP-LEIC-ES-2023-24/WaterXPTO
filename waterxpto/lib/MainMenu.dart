@@ -1,9 +1,6 @@
 import 'dart:math';
-
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'Statistics/StatisticsContent.dart';
-import 'NotificationController.dart';
 import 'dart:async';
 
 class MainMenu extends StatefulWidget {
