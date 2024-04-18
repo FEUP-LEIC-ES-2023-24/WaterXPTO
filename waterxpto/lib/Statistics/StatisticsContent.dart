@@ -40,26 +40,28 @@ class StatisticsContent extends StatelessWidget {
 
         children: [
           //Text
-          Text("Your History", style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500)),
+          Expanded(child: Text("Your History", style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500))),
 
-          Container(
-            margin: EdgeInsets.only(top: 10),
-            alignment: Alignment.center,
-            child: TabBar(
-
-
-              indicator: BoxDecoration(),
-              dividerColor: Colors.transparent,
-              labelColor: Colors.transparent,
-              splashFactory: NoSplash.splashFactory,
-              overlayColor: null,
-
-              tabs: [
-                StatisticsTabButton(text: "week"),
-                StatisticsTabButton(text: "month"),
-                StatisticsTabButton(text: "year"),
-
-              ],
+          Expanded(
+            child: Container(
+              margin: EdgeInsets.only(top: 10),
+              alignment: Alignment.center,
+              child: TabBar(
+            
+            
+                indicator: BoxDecoration(),
+                dividerColor: Colors.transparent,
+                labelColor: Colors.transparent,
+                splashFactory: NoSplash.splashFactory,
+                overlayColor: null,
+            
+                tabs: [
+                  StatisticsTabButton(text: "week"),
+                  StatisticsTabButton(text: "month"),
+                  StatisticsTabButton(text: "year"),
+            
+                ],
+              ),
             ),
           ),
           //Tab for Week Month Year
