@@ -1,16 +1,15 @@
 
 import "package:flutter/material.dart";
 import 'package:fl_chart/fl_chart.dart';
+import 'BaseChart.dart';
+class WeekChart extends BaseChart {
 
-class WeekChart extends StatefulWidget {
-  final List<double> liters;
-
-  const WeekChart({required this.liters});
+  const WeekChart({required List<double> liters, Key? key})
+      : super(liters: liters, key: key);
 
 
   @override
   State<WeekChart> createState() => _WeekChartState();
-
 
 }
 

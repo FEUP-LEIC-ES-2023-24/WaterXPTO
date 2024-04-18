@@ -3,16 +3,19 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
+import 'BaseChart.dart';
 
 
-class Yearchart extends StatefulWidget {
-  const Yearchart({super.key});
+
+class YearChart extends BaseChart {
+  const YearChart({required List<double> liters, Key? key})
+      : super(liters: liters, key: key);
 
   @override
-  State<Yearchart> createState() => _YearchartState();
+  State<YearChart> createState() => _YearChartState();
 }
 
-class _YearchartState extends State<Yearchart> {
+class _YearChartState extends State<YearChart> {
 
   List<FlSpot> waterUsageData = List.generate(13, (index) {
     // Assuming random water usage between 1 and 10 liters per day
@@ -47,7 +50,7 @@ class _YearchartState extends State<Yearchart> {
                 border: const Border(bottom: BorderSide(), left: BorderSide())),
             gridData: FlGridData(show: false),
             titlesData: FlTitlesData(
-              bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              bottomTitles: AxisTitles(sideTitles: _groupSideTitles()),
               leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
               topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
               rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -70,11 +73,18 @@ class _YearchartState extends State<Yearchart> {
     return SideTitles(
         showTitles: true,
         getTitlesWidget: (value, meta) {
-          return Text(titles[value.toInt()], style: TextStyle(color: Color.fromRGBO(2, 112, 136, 0.65),));
+          if (value - 1 >= 0 && value - 1 < 12) {
+           return Text(titles[value.toInt() - 1], style: TextStyle(color: Color.fromRGBO(2, 112, 136, 0.65),));
+          }
+          else {
+            return Text("");
+          }
         }
 
     );
   }
+
+
 
 
 }

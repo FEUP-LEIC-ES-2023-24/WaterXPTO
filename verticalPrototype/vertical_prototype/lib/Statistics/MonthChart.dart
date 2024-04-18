@@ -3,8 +3,11 @@ import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
-class MonthChart extends StatefulWidget {
-  const MonthChart({super.key});
+import 'BaseChart.dart';
+
+class MonthChart extends BaseChart {
+  const MonthChart({required List<double> liters, Key? key})
+      : super(liters: liters, key: key);
 
   @override
   State<MonthChart> createState() => _MonthChartState();
