@@ -99,8 +99,8 @@ Take a look at the following links to learn some techniques:
 
 ![Domain model](Docs/DomainModel.png)
 
-Each user can set as many goals as he wants and recieve different tips. Also, a user can register an activity and time its duration.
-
+Each user can set as many personal goals as he wants and receive different tips.
+Also, a user can register an activity and time its duration and the user should insert his data in order to receive personalized statistics such as a region and a nationality.
 
 ## Architecture and Design
 The architecture of a software system encompasses the set of key decisions about its overall organization. 
@@ -115,7 +115,7 @@ In this section you should start by briefly describing the overall components of
 
 The main focus of the Logical Architecture is to represent the various layers/packages that belong to our app.
 
-Our application (WaterXPTO) contains the majority of the functionalities. It is divided in three subsections: `GUI` (`G`raphical `U`ser `I`nterface), the application's `Logic` and the WaterXPTO `Database`, which contains data storage. Inside the `Logic` package there are more sections: `TipSystem`, `WaterTimer`, `Statistics` and `GoalSystem`. Their responsability is managing the application tips, the duration of an activity, data manipulation and goal's management, respectively.
+Our application (WaterXPTO) contains the majority of the functionalities. It is divided in three subsections: `GUI` (`G`raphical `U`ser `I`nterface), the application's `Logic` and the WaterXPTO `Database`, which contains data storage. Inside the `Logic` package there are more sections: `TipSystem`, `WaterTimer`, `Statistics` and `GoalSystem`. Their responsibility is managing the application tips, the duration of an activity, data manipulation and goal's management, respectively.
 
 The External Services includes the dependencies in our app, in this case, `Firestore` and `Firebase`.
 
@@ -150,9 +150,30 @@ You can find below information and references related with the project managemen
   * retrospectives: meeting notes in a document in the repository;
  
 
-Sprint 1
+### Sprint 1
 
+#### Begin
 ![image](https://github.com/FEUP-LEIC-ES-2023-24/2LEIC08T2/assets/145542200/dbd5ee54-ce75-4dad-911f-f4ccbc8331b0)
 
+#### End
 
+#### What went well?
+- We were able to successfully implement notifications with Background Services.
+- We were able to make an interface similar to the mockups.
+- We were able to implement the timer for the activities.
 
+#### What went wrong?
+- We were not expecting one of the members to leave the group.
+- We were not able to implement all the features we wanted to.
+- It took us a while to compile the project in different devices.
+
+#### What will we do differently next time?
+- We will try to implement the features we want to earlier.
+
+#### How satisfied are we with the progress?
+- We are satisfied with the progress we made, but we could have done more.
+
+#### Completed user stories
+- [As a User, I want to receive a statistical analysis about my water consumption patterns, so that I can improve my water consumption habits.](https://github.com/orgs/FEUP-LEIC-ES-2023-24/projects/37/views/1?pane=issue&itemId=56479404)
+- [As a User, I want to receive tips and recommendations for reducing water consumption in various areas of my daily life, so that I can learn new methods to reduce my water consumption.](https://github.com/orgs/FEUP-LEIC-ES-2023-24/projects/37/views/1?pane=issue&itemId=60075788)
+- [As a User, I want to receive notifications and reminders to take shorter showers, and perform other water-saving actions, so that I can stay on track with my conservation efforts.](https://github.com/orgs/FEUP-LEIC-ES-2023-24/projects/37/views/1?pane=issue&itemId=56479564)

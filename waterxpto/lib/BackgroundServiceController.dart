@@ -77,8 +77,8 @@ class BackgroundServiceController {
       service.stopSelf();
     });
 
-    //Inicia o timer para notificacoes diarias
-    Timer.periodic(const Duration(seconds: 15), (timer) async {
+    //Inicia o timer para notificacoes
+    Timer.periodic(const Duration(hours: 8), (timer) async {
       NotificationController.randomTipNotification();
     });
   }

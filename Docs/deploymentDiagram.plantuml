@@ -4,7 +4,7 @@
 frame "Deployment View" {
 
   node "Firebase Server Machine" as firebase{
-    database "Firestore Database" as firebasedb
+    database "Firestore Database (NoSQL)" as firebasedb
     artifact "Firebase authentication" as firebaseauth
   }
 
