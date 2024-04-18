@@ -68,7 +68,7 @@ class HomeContent extends StatefulWidget {
 
 class _HomeContentState extends State<HomeContent> {
   final List<String> messages = [
-    "Turn off faucets tightly after use, fix leaks promptly, and opt for shorter showers. Small actions can yield big water savings over time.",
+    "Turn off faucets tightly after use, fix leaks promptly and opt for shorter showers. Small actions yield big savings over time.",
     "Reuse water from washing fruits/veggies to water plants. Every drop counts!",
     "Choose drought-resistant plants for your garden to minimize water usage. Sustainable landscaping saves resources.",
     "Use a broom instead of a hose to clean driveways and sidewalks. It saves water and energy. Small changes make a big impact!",
@@ -80,6 +80,8 @@ class _HomeContentState extends State<HomeContent> {
 
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
+    double factor = screenHeight < 800 ? 0.25 : 0.4;
     final Random random = Random();
     final String message = messages[random.nextInt(messages.length)];
 
@@ -90,8 +92,8 @@ class _HomeContentState extends State<HomeContent> {
               alignment: Alignment.topCenter,
               margin: EdgeInsets.only(top: 0.0),
               child: Container(
-                width: 353.0,
-                height: 80.0,
+                width: MediaQuery.of(context).size.width * 0.9,
+                height: MediaQuery.of(context).size.height * 0.115,
                 decoration: BoxDecoration(
                   color: Color(int.parse('0xFF027088')),
                   borderRadius: BorderRadius.circular(8.0),
@@ -103,20 +105,21 @@ class _HomeContentState extends State<HomeContent> {
                     textAlign: TextAlign.justify,
                     style: TextStyle(
                       color: Color(int.parse('0xFFFFFFFF')),
-                      fontSize: calculateFontSize(message),
+                      fontSize: screenHeight < 800 ? calculateFontSize(message) / 1.25 : calculateFontSize(message) * 1.12,
                       fontFamily: 'Montserrat',
                     ),
                   ),
                 ),
               ),
             ),
-            Image.asset('assets/img/WaterDrop2.png', width: 350.0, height: 350.0),
+            SizedBox(height: screenHeight < 800 ? 0.05 : 0.025),
+            Image.asset('assets/img/WaterDrop2.png', width: screenHeight * factor, height: screenHeight * factor),
+            SizedBox(height: screenHeight < 800 ? 0.05 : 0.025),
             Consumer<WaterSpentNotifier>(
               builder: (context, waterSpentNotifier, child) {
-                return Text('${double.parse(waterSpentNotifier.waterSpent.toStringAsFixed(2))} L today', style: TextStyle(fontSize: 40.0, fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.black));
+                return Text('${double.parse(waterSpentNotifier.waterSpent.toStringAsFixed(2))} L today', style: TextStyle(fontSize: 25.0 * screenHeight / 600, fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.black));
               },
             ),
-            SizedBox(height: 10.0),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -284,31 +287,37 @@ class _TimerDialogState extends State<TimerDialog> {
 
 
 Widget customButton(IconData icon, String label, BuildContext context) {
-  return ElevatedButton(
-    onPressed: () {
-      if (label == 'Timer') {
-        // Show timer dialog
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return TimerDialog();
-          },
-        );
-      }
-    },
-    style: ElevatedButton.styleFrom(
-      foregroundColor: Colors.white,
-      backgroundColor: Color(int.parse('0xFF027088')),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
+  double screenHeight = MediaQuery.of(context).size.height;
+  double factor = screenHeight < 800 ? 0.08 : 0.3;
+  return Container(
+    height: screenHeight * factor,
+    width: screenHeight * factor,
+    child: ElevatedButton(
+      onPressed: () {
+        if (label == 'Timer') {
+          // Show timer dialog
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return TimerDialog();
+            },
+          );
+        }
+      },
+      style: ElevatedButton.styleFrom(
+        foregroundColor: Colors.white,
+        backgroundColor: Color(int.parse('0xFF027088')),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
       ),
-    ),
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        Icon(icon, size: 18),
-        Text(label),
-      ],
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Icon(icon, size: 18),
+          Text(label),
+        ],
+      ),
     ),
   );
 }

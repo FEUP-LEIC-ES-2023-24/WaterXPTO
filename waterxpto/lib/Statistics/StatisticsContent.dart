@@ -34,53 +34,46 @@ class StatisticsContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-
       length: 3,
-      child: Column(
-
-        children: [
-          //Text
-          Expanded(child: Text("Your History", style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500))),
-
-          Expanded(
-            child: Container(
-              margin: EdgeInsets.only(top: 10),
-              alignment: Alignment.center,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              height: 50, // Adjust the height as needed
+              child: Center(
+                child: Text("Your History", style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500)),
+              ),
+            ),
+            Container(
+              height: 50, // Adjust the height as needed
               child: TabBar(
-            
-            
-                indicator: BoxDecoration(),
-                dividerColor: Colors.transparent,
-                labelColor: Colors.transparent,
-                splashFactory: NoSplash.splashFactory,
-                overlayColor: null,
-            
-                tabs: [
-                  StatisticsTabButton(text: "week"),
-                  StatisticsTabButton(text: "month"),
-                  StatisticsTabButton(text: "year"),
-            
+                  indicator: BoxDecoration(),
+                  dividerColor: Colors.transparent,
+                  labelColor: Colors.transparent,
+                  splashFactory: NoSplash.splashFactory,
+                  overlayColor: null,
+
+                  tabs: [
+                    StatisticsTabButton(text: "week"),
+                    StatisticsTabButton(text: "month"),
+                    StatisticsTabButton(text: "year"),
+                  ]
+              ),
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.9,
+              child: TabBarView(
+                children: [
+                  // Week Chart
+                  StatisticsTab(w: WeekChart(liters: liters), nationalAverage: nationalAverage,),
+                  StatisticsTab(w: MonthChart(liters: monthLiters), nationalAverage: monthNationalAverage,),
+                  StatisticsTab(w: YearChart(liters: yearLiters), nationalAverage: yearNationalAverage,),
                 ],
               ),
             ),
-          ),
-          //Tab for Week Month Year
-          //TabBarView to display different charts based on selected tab
-          SizedBox(
-            height: 600,
-            child: TabBarView(
-              children: [
-                // Week Chart
-                StatisticsTab(w: WeekChart(liters: liters), nationalAverage: nationalAverage,),
-                StatisticsTab(w: MonthChart(liters: monthLiters), nationalAverage: monthNationalAverage,),
-                StatisticsTab(w: YearChart(liters: yearLiters), nationalAverage: yearNationalAverage,),
-
-              ],
-            ),
-          ),
-
-        ],
-      ),
+          ],
+        ),
+      )
     );
   }
 }
@@ -120,8 +113,8 @@ class StatisticsTab extends StatelessWidget {
     int avg = w.getAverage();
     int nBelowNationalAvg = nationalAverage - avg;
     return SizedBox(
-
-
+      width: MediaQuery.of(context).size.width * 0.5,
+      height: MediaQuery.of(context).size.height * 0.5,
       child: Column(
         children: [
           Container(
@@ -145,7 +138,7 @@ class StatisticsTab extends StatelessWidget {
             ),
           ),
           Text("Average: $avg L", style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
-          Text("$nBelowNationalAvg Below National Average ($nationalAverage L)", style: TextStyle(fontSize: 25, fontWeight: FontWeight.w400),)
+          Text("$nBelowNationalAvg Below National Average ($nationalAverage L)", style: TextStyle(fontSize: 21, fontWeight: FontWeight.w400),)
         ],
       ),
     );
