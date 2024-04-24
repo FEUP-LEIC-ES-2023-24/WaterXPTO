@@ -165,3 +165,9 @@ At the moment, we have partially implemented some features and some pages, such 
 - [As a User, I want to receive a statistical analysis about my water consumption patterns, so that I can improve my water consumption habits.](https://github.com/orgs/FEUP-LEIC-ES-2023-24/projects/37/views/1?pane=issue&itemId=56479404)
 - [As a User, I want to receive tips and recommendations for reducing water consumption in various areas of my daily life, so that I can learn new methods to reduce my water consumption.](https://github.com/orgs/FEUP-LEIC-ES-2023-24/projects/37/views/1?pane=issue&itemId=60075788)
 - [As a User, I want to receive notifications and reminders to take shorter showers, and perform other water-saving actions, so that I can stay on track with my conservation efforts.](https://github.com/orgs/FEUP-LEIC-ES-2023-24/projects/37/views/1?pane=issue&itemId=56479564)
+
+### Sprint 2
+
+#### Begin
+
+![Sprint2Begin](Docs/sprint2begin.png)
