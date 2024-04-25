@@ -21,7 +21,7 @@ class BackgroundServiceController {
       'notification_channel_id',
       'notification_channel_name',
       description: 'Channel used for custom notifications',
-      importance: Importance.low,
+      importance: Importance.high,
     );
 
     final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
@@ -78,7 +78,7 @@ class BackgroundServiceController {
     });
 
     //Inicia o timer para notificacoes
-    Timer.periodic(const Duration(hours: 8), (timer) async {
+    Timer.periodic(const Duration(seconds: 600), (timer) async {
       NotificationController.randomTipNotification();
     });
   }

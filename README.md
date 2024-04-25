@@ -135,27 +135,15 @@ At the moment, we have partially implemented some features and some pages, such 
 
 
 ## Project management
-Software project management is the art and science of planning and leading software projects, in which software projects are planned, implemented, monitored and controlled.
-
-In the context of ESOF, we recommend each team to adopt a set of project management practices and tools capable of registering tasks, assigning tasks to team members, adding estimations to tasks, monitor tasks progress, and therefore being able to track their projects.
-
-Common practices of managing iterative software development are: backlog management, release management, estimation, iteration planning, iteration development, acceptance tests, and retrospectives.
-
-You can find below information and references related with the project management in our team: 
-
-* Backlog management: Product backlog and Sprint backlog in a [Github Projects board](https://github.com/orgs/FEUP-LEIC-ES-2023-24/projects/64);
-* Release management: [v0](#), v1, v2, v3, ...;
-* Sprint planning and retrospectives: 
-  * plans: screenshots of Github Projects board at begin and end of each iteration;
-  * retrospectives: meeting notes in a document in the repository;
- 
 
 ### Sprint 1
 
 #### Begin
-![image](https://github.com/FEUP-LEIC-ES-2023-24/2LEIC08T2/assets/145542200/dbd5ee54-ce75-4dad-911f-f4ccbc8331b0)
+![Sprint1Begin](Docs/sprint1begin.png)
 
 #### End
+
+![Sprint1End](Docs/sprint1end.png)
 
 #### What went well?
 - We were able to successfully implement notifications with Background Services.
@@ -177,3 +165,9 @@ You can find below information and references related with the project managemen
 - [As a User, I want to receive a statistical analysis about my water consumption patterns, so that I can improve my water consumption habits.](https://github.com/orgs/FEUP-LEIC-ES-2023-24/projects/37/views/1?pane=issue&itemId=56479404)
 - [As a User, I want to receive tips and recommendations for reducing water consumption in various areas of my daily life, so that I can learn new methods to reduce my water consumption.](https://github.com/orgs/FEUP-LEIC-ES-2023-24/projects/37/views/1?pane=issue&itemId=60075788)
 - [As a User, I want to receive notifications and reminders to take shorter showers, and perform other water-saving actions, so that I can stay on track with my conservation efforts.](https://github.com/orgs/FEUP-LEIC-ES-2023-24/projects/37/views/1?pane=issue&itemId=56479564)
+
+### Sprint 2
+
+#### Begin
+
+![Sprint2Begin](Docs/sprint2begin.png)
