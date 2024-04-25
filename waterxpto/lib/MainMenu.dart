@@ -1,6 +1,9 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'Challenge.dart';
+import 'Goals.dart';
+import 'Settings.dart';
 import 'Statistics/StatisticsContent.dart';
 import 'dart:async';
 import 'WaterSpentNotifier.dart';
@@ -19,6 +22,9 @@ class _MainMenuState extends State<MainMenu> {
   static  List<Widget> _widgetOptions = <Widget>[
     HomeContent(),
     StatisticsContent(),
+    Challenge(),
+    Goals(),
+    Settings(),
   ];
 
   void _onItemTapped(int index) {
@@ -40,6 +46,8 @@ class _MainMenuState extends State<MainMenu> {
 
 
       bottomNavigationBar: BottomNavigationBar(
+        showUnselectedLabels: true,
+        unselectedItemColor: Colors.grey,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -48,6 +56,18 @@ class _MainMenuState extends State<MainMenu> {
           BottomNavigationBarItem(
             icon: Icon(Icons.insert_chart),
             label: 'Statistics',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.supervised_user_circle_sharp),
+            label: 'Challenges',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.emoji_events_sharp),
+            label: 'Goals',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
           ),
         ],
         currentIndex: _selectedIndex,

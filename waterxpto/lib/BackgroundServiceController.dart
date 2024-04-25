@@ -16,12 +16,11 @@ class BackgroundServiceController {
   static Future<void> initializeBackgroundService() async {
     final service = FlutterBackgroundService();
 
-    //Necessario para android
     const AndroidNotificationChannel channel = AndroidNotificationChannel(
       'notification_channel_id',
       'notification_channel_name',
       description: 'Channel used for custom notifications',
-      importance: Importance.high,
+      importance: Importance.max,
     );
 
     final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
@@ -78,7 +77,7 @@ class BackgroundServiceController {
     });
 
     //Inicia o timer para notificacoes
-    Timer.periodic(const Duration(seconds: 600), (timer) async {
+    Timer.periodic(const Duration(seconds: 14500), (timer) async {
       NotificationController.randomTipNotification();
     });
   }
