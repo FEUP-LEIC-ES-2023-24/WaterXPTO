@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:waterxpto/models/WaterComsumption.dart';
 import 'Statistics/StatisticsContent.dart';
 import 'dart:async';
 import 'WaterSpentNotifier.dart';
@@ -153,6 +154,9 @@ class TimerDialog extends StatefulWidget {
 }
 
 class _TimerDialogState extends State<TimerDialog> {
+
+  final WaterConsumptionService waterService = WaterConsumptionService();
+
   bool _timerRunning = false;
   bool _timerPaused = false;
   int _timerCount = 0; // in seconds
@@ -274,6 +278,8 @@ class _TimerDialogState extends State<TimerDialog> {
 
   void _stopTimer() {
     setState(() {
+
+
       _timerRunning = false;
       _timerPaused = true;
       WaterSpentNotifier.of(context).updateWaterSpent(_waterSpent);

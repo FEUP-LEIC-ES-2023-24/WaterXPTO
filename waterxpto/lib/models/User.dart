@@ -3,20 +3,21 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 
 class WaterUser {
+  String userID;
+
   String name;
-  DateTime birthDate;
   String email;
   String password;
   String nationality;
-  String region;
+  //String region;
 
   WaterUser({
+    required this.userID,
     required this.name,
-    required this.birthDate,
     required this.email,
     required this.password,
     required this.nationality,
-    required this.region,
+    //required this.region,
   });
 }
 
@@ -27,8 +28,9 @@ class AuthService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
 
+
   // Register user with email and password
-  Future registerUser(String email, String password, String name, DateTime birthDate, String nationality, String region) async {
+  Future registerUser(String email, String password, String name, String nationality) async {
     try {
       // Create user with email and password
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
@@ -42,9 +44,8 @@ class AuthService {
       // Store additional user data in Firestore
       await _firestore.collection('users').doc(userId).set({
         'name': name,
-        'birthDate': birthDate,
         'nationality': nationality,
-        'region': region,
+        //'region': region,
       });
 
       return "Registration successful";
@@ -75,7 +76,7 @@ class AuthService {
   WaterUser? getCurrentUser() {
     User? currentUser = _auth.currentUser;
     return currentUser != null
-        ? WaterUser(email: currentUser.email!, password: "", name: "", birthDate: DateTime.now(), nationality: "", region: "")
+        ? WaterUser(userID: currentUser.uid, email: currentUser.email!, password: "", name: "",  nationality: "", )
         : null;
   }
 }

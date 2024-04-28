@@ -47,10 +47,7 @@ TextField(
 controller: _nationalityController,
 decoration: InputDecoration(labelText: 'Nationality'),
 ),
-TextField(
-controller: _regionController,
-decoration: InputDecoration(labelText: 'Region'),
-),
+
 SizedBox(height: 20),
 ElevatedButton(
 onPressed: () async {
@@ -60,7 +57,7 @@ String name = _nameController.text;
 String nationality = _nationalityController.text;
 String region = _regionController.text;
 String result = await _authService.registerUser(
-email, password, name, DateTime.now(), nationality, region);
+email, password, name, nationality);
 if (result == "Registration successful") {
 Navigator.pushReplacement(
 context,

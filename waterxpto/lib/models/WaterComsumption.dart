@@ -1,23 +1,39 @@
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 
 class WaterConsumption {
-  String userID;
-  DateTime finishDate;
-  Timestamp duration;
 
-  WaterConsumption({required this.userID, required this.finishDate, required this.duration});
+  late String id;
+
+  String waterActivityID; //Foreign key to water activity
+
+  DateTime finishDate;
+  UnsignedLong duration;
+
+  WaterConsumption(
+      {required this.waterActivityID, required this.finishDate, required this.duration});
 
   // Convert WaterConsumption object to Map
   Map<String, dynamic> toMap() {
     return {
-      'userID' : userID,
-      'finishDate': Timestamp.fromDate(finishDate),
+      'water_activity_id': waterActivityID,
+      'finish_date': finishDate,
       'duration': duration,
     };
+  }
 
-}
+
+  factory WaterConsumption.fromMap(String id, Map<String, dynamic> map) {
+    return WaterConsumption(
+      finishDate: map['finish_date'].toDate(),
+      duration: map['duration'],
+      waterActivityID: map['water_activity_id'],
+    )
+      ..id = id;
+  }
 
 }
 
