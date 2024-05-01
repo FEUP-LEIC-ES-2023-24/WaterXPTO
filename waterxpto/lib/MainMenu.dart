@@ -1,6 +1,9 @@
+import 'dart:ffi';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:waterxpto/models/User.dart';
+import 'package:waterxpto/models/WaterActivity.dart';
 import 'package:waterxpto/models/WaterComsumption.dart';
 import 'Statistics/StatisticsContent.dart';
 import 'dart:async';
@@ -156,21 +159,34 @@ class TimerDialog extends StatefulWidget {
 class _TimerDialogState extends State<TimerDialog> {
 
   final WaterConsumptionService waterService = WaterConsumptionService();
+  final AuthService authService = AuthService();
+  final WaterActivityService waterActivityService = WaterActivityService();
 
   bool _timerRunning = false;
   bool _timerPaused = false;
   int _timerCount = 0; // in seconds
   double _waterSpent = 0.0; // in liters
 
-  String _selectedUsageType = 'Shower';
-  List<String> _usageTypes = ['Shower', 'Washing Dishes', 'Hands', 'Plants', 'Clothes'];
-  Map<String, double> _usageRates = {
-    'Shower': 9.5, // Liters per minute
-    'Washing Dishes': 5.0,
-    'Hands': 2.0,
-    'Plants': 0.5,
-    'Clothes': 15.0,
-  };
+
+  late String _selectedUsageType = "";
+  List<String> _usageTypes = [];
+
+  void initState() {
+    super.initState();
+    _loadUsageTypes(); // Call the async method inside initState
+  }
+
+  void _loadUsageTypes() {
+    waterActivityService.getAllWaterActivityNames().then((List<String> types) {
+      setState(() {
+        _usageTypes = types;
+        _selectedUsageType = types.first;
+      });
+    }).catchError((error) {
+      print('Error loading usage types: $error');
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -270,19 +286,24 @@ class _TimerDialogState extends State<TimerDialog> {
       setState(() {
         if (!_timerPaused) {
           _timerCount++;
-          _waterSpent = (_usageRates[_selectedUsageType] ?? 0.0) * _timerCount / 60.0;
+          //_waterSpent = (_usageRates[_selectedUsageType] ?? 0.0) * _timerCount / 60.0;
         }
       });
     });
   }
 
-  void _stopTimer() {
-    setState(() {
-
-
+  void _stopTimer()  {
+    setState(() async {
       _timerRunning = false;
       _timerPaused = true;
       WaterSpentNotifier.of(context).updateWaterSpent(_waterSpent);
+
+      //Send to consumption to the database
+
+      WaterActivity? waterActivity = await waterActivityService.getWaterActivity(_selectedUsageType);
+      WaterConsumption waterConsumption = WaterConsumption(waterActivityID: waterActivity!.id, userID: authService.getCurrentUser()!.userID, finishDate: DateTime.now(), duration: _timerCount);
+      await waterService.addWaterConsumption(waterConsumption);
+
       _timerCount = 0;
       _waterSpent = 0.0;
       _timer?.cancel();

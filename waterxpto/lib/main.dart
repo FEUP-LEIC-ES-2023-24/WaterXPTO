@@ -1,6 +1,7 @@
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/material.dart';
 import 'package:waterxpto/LoginScreen.dart';
+import 'package:waterxpto/models/WaterActivity.dart';
 import 'MainMenu.dart';
 import 'dart:async';
 import 'package:awesome_notifications/awesome_notifications.dart';
@@ -36,6 +37,9 @@ Future<void> main() async {
     // 4. App Attest provider with fallback to Device Check provider (App Attest provider is only available on iOS 14.0+, macOS 14.0+)
     appleProvider: AppleProvider.appAttest,
   );
+
+  WaterActivityService waterActivityService = WaterActivityService();
+  //waterActivityService.addWaterActivity(WaterActivity(name: "Shower", description: "Showering wastes a lot more water than it seems", waterFlow: 10.0));
 
   runApp(
     ChangeNotifierProvider(
