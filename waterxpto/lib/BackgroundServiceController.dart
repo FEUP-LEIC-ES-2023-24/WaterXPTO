@@ -11,85 +11,109 @@ import 'NotificationController.dart';
 
 
 class BackgroundServiceController {
+  static bool _notifications = true;
 
-  //Inicia o servico em background
-  static Future<void> initializeBackgroundService() async {
-    final service = FlutterBackgroundService();
+  static bool get notifications => _notifications;
 
-    const AndroidNotificationChannel channel = AndroidNotificationChannel(
-      'notification_channel_id',
-      'notification_channel_name',
-      description: 'Channel used for custom notifications',
-      importance: Importance.max,
-    );
+  BackgroundServiceController._internal();
+  static final BackgroundServiceController _instance = BackgroundServiceController._internal();
 
-    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-
-    //Inicializa as notificacoes
-    if (Platform.isIOS || Platform.isAndroid) {
-      await flutterLocalNotificationsPlugin.initialize(
-        const InitializationSettings(
-          iOS: DarwinInitializationSettings(),
-          android: AndroidInitializationSettings('ic_bg_service_small'),
-        ),
-      );
-    }
-
-    //Cria o canal de notificacao
-    await flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(channel);
-
-    //Configura o servico -> chama a funcao onStart
-    await service.configure(
-      androidConfiguration: AndroidConfiguration(
-        onStart: onStart,
-        autoStart: true,
-        isForegroundMode: true,
-        notificationChannelId: 'notification_channel_id',
-        foregroundServiceNotificationId: 15,
-      ),
-      iosConfiguration: IosConfiguration(
-        autoStart: true,
-        onForeground: onStart,
-      ),
-    );
-    service.startService();
+  factory BackgroundServiceController() {
+    return _instance;
   }
 
-  //Funcao chamada quando o servico inicia
-  @pragma('vm:entry-point')
-  static void onStart(ServiceInstance service) async {
-    DartPluginRegistrant.ensureInitialized();
+  void updateStatus(bool status) {
+    _notifications = status;
+    restartBackgroundService();
+  }
 
-    if (service is AndroidServiceInstance) {
-      service.on('setAsForeground').listen((event) {
-        service.setAsForegroundService();
-      });
-
-      service.on('setAsBackground').listen((event) {
-        service.setAsBackgroundService();
-      });
+  void restartBackgroundService() async {
+    final service = FlutterBackgroundService();
+    var isRunning = await service.isRunning();
+    if (notifications) {
+        await service.startService();
+    } else {
+        service.invoke("stopService");
     }
+  }
+}
 
-    service.on('stopService').listen((event) {
-      service.stopSelf();
+//Inicia o servico em background
+Future<void> initializeBackgroundService() async {
+  final service = FlutterBackgroundService();
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+  const AndroidNotificationChannel channelDaily = AndroidNotificationChannel(
+    'daily_tips',
+    'Daily Tips',
+    description: 'Channel used for random daily tips',
+    importance: Importance.max,
+  );
+
+
+  //Inicializa as notificacoes
+  if (Platform.isIOS || Platform.isAndroid) {
+    await flutterLocalNotificationsPlugin.initialize(
+      const InitializationSettings(
+        iOS: DarwinInitializationSettings(),
+        android: AndroidInitializationSettings('ic_bg_service_small'),
+      ),
+    );
+  }
+
+  //Cria o canal de notificacao
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(channelDaily);
+
+  //Configura o servico -> chama a funcao onStart
+  await service.configure(
+    androidConfiguration: AndroidConfiguration(
+      onStart: onStart,
+      autoStart: true,
+      isForegroundMode: false,
+      notificationChannelId: 'daily_tips',
+      foregroundServiceNotificationId: 15,
+    ),
+    iosConfiguration: IosConfiguration(
+      autoStart: true,
+      onForeground: onStart,
+    ),
+  );
+  service.startService();
+}
+
+//Recebe a acao da notificacao
+Future<void> listenToNotificationEvent() async {
+  AwesomeNotifications().setListeners(onActionReceivedMethod: onActionReceivedMethod);
+}
+
+//Funcao chamada quando a notificacao e clicada
+Future<void> onActionReceivedMethod(ReceivedAction receivedAction) async {
+  Get.toNamed('/main');
+}
+
+//Funcao chamada quando o servico inicia
+@pragma('vm:entry-point')
+void onStart(ServiceInstance service) async {
+  DartPluginRegistrant.ensureInitialized();
+
+  if (service is AndroidServiceInstance) {
+    service.on('setAsForeground').listen((event) {
+      service.setAsForegroundService();
     });
+
+    service.on('setAsBackground').listen((event) {
+      service.setAsBackgroundService();
+    });
+  }
+
+  service.on('stopService').listen((event) {
+    service.stopSelf();
+  });
 
     //Inicia o timer para notificacoes
-    Timer.periodic(const Duration(seconds: 14500), (timer) async {
+    Timer.periodic(const Duration(seconds: 10), (timer) async {
       NotificationController.randomTipNotification();
     });
-  }
-
-  //Recebe a acao da notificacao
-  static Future<void> listenToNotificationEvent() async {
-    AwesomeNotifications().setListeners(onActionReceivedMethod: onActionReceivedMethod);
-  }
-
-  //Funcao chamada quando a notificacao e clicada
-  static Future<void> onActionReceivedMethod(ReceivedAction receivedAction) async {
-    Get.toNamed('/main');
-  }
-
 }

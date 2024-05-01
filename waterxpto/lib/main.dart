@@ -11,7 +11,7 @@ import 'WaterSpentNotifier.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await BackgroundServiceController.initializeBackgroundService();
+  await initializeBackgroundService();
   await NotificationController.initializeNotifications();
   runApp(
     ChangeNotifierProvider(

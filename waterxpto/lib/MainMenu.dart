@@ -125,7 +125,7 @@ class _HomeContentState extends State<HomeContent> {
                     textAlign: TextAlign.justify,
                     style: TextStyle(
                       color: Color(int.parse('0xFFFFFFFF')),
-                      fontSize: screenHeight < 800 ? calculateFontSize(message) / 1.25 : calculateFontSize(message) * 1.12,
+                      fontSize: screenHeight < 800 ? calculateFontSize(message) / 1.25 : calculateFontSize(message) * 1.06,
                       fontFamily: 'Montserrat',
                     ),
                   ),
