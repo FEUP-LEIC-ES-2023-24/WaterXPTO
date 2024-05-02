@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 
 
@@ -9,7 +10,7 @@ class WaterConsumption {
   late String id;
 
   String waterActivityID; //Foreign key to water activity
-  String userID;
+  String? userID;
 
   DateTime finishDate;
   int duration;
@@ -33,7 +34,7 @@ class WaterConsumption {
       userID: snapshot['user_id'],
       waterActivityID: snapshot['water_activity_id'],
       finishDate: snapshot['finish_date'].toDate(),
-      duration: snapshot['duration'].toDouble(),
+      duration: snapshot['duration'],
     )..id = snapshot.id;
   }
 }
@@ -47,6 +48,23 @@ class WaterConsumptionService {
       await _firestore.collection('water_consumptions').add(waterConsumption.toMap());
     } catch (e) {
       print("Error adding water consumption: $e");
+    }
+  }
+  Future<List<WaterConsumption>> getUserWaterConsumptionsInADay(String? userID, DateTime date) async {
+    List<WaterConsumption> result = [];
+    try {
+      QuerySnapshot snapshot = await _firestore.collection('water_consumptions').where('user_id', isEqualTo: userID).get();
+      if(snapshot.docs.isNotEmpty) {
+        for(var doc in snapshot.docs) {
+          if(DateUtils.dateOnly(doc['finish_date'].toDate()) == date){
+              result.add(WaterConsumption.fromSnapshot(doc));
+          }
+        }
+      }
+      return result;
+    } catch (e) {
+      print("Error adding water consumption: $e");
+      return result;
     }
   }
 }

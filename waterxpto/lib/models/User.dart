@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 
 class WaterUser {
-  String userID;
+  String? userID;
 
   String name;
   String email;

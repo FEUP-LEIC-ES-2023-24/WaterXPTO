@@ -1,5 +1,6 @@
 import 'dart:ffi';
 import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:waterxpto/models/User.dart';
@@ -71,6 +72,10 @@ class HomeContent extends StatefulWidget {
 }
 
 class _HomeContentState extends State<HomeContent> {
+  
+  final AuthService authService = AuthService();
+  final WaterConsumptionService waterConsumptionService = WaterConsumptionService();
+  final WaterActivityService waterActivityService = WaterActivityService();
   final List<String> messages = [
     "Turn off faucets tightly after use, fix leaks promptly and opt for shorter showers. Small actions yield big savings over time.",
     "Reuse water from washing fruits/veggies to water plants. Every drop counts!",
@@ -82,12 +87,28 @@ class _HomeContentState extends State<HomeContent> {
     "Install a dual-flush toilet to reduce water usage. It's an eco-friendly way to save water and money.",
   ];
 
+  final Random random = Random();
+  String message = "";
+  double todayLitersSpent = 0;
+
+
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeState();
+  }
+
+  Future<void> _initializeState() async {
+    message = messages[Random().nextInt(messages.length)];
+    await updateTodayLitersSpent();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double factor = screenHeight < 800 ? 0.25 : 0.4;
-    final Random random = Random();
-    final String message = messages[random.nextInt(messages.length)];
 
     return Scaffold(
         body: Column(
@@ -121,7 +142,7 @@ class _HomeContentState extends State<HomeContent> {
             SizedBox(height: screenHeight < 800 ? 0.05 : 0.025),
             Consumer<WaterSpentNotifier>(
               builder: (context, waterSpentNotifier, child) {
-                return Text('${double.parse(waterSpentNotifier.waterSpent.toStringAsFixed(2))} L today', style: TextStyle(fontSize: 25.0 * screenHeight / 600, fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.black));
+                return Text('${todayLitersSpent.toStringAsFixed(1)} L today', style: TextStyle(fontSize: 25.0 * screenHeight / 600, fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.black));
               },
             ),
             Expanded(
@@ -147,6 +168,26 @@ class _HomeContentState extends State<HomeContent> {
         )
     );
   }
+
+
+
+  Future<void> updateTodayLitersSpent() async {
+    List<WaterConsumption> todayValues = await waterConsumptionService.getUserWaterConsumptionsInADay(authService.getCurrentUser()!.userID, DateUtils.dateOnly(DateTime.now()));
+    double sum = 0;
+
+    // Perform asynchronous work outside of setState()
+    await Future.forEach(todayValues, (val) async {
+      WaterActivity? w = await waterActivityService.getWaterActivityByID(val.waterActivityID);
+      sum += (w!.waterFlow * (val.duration.toDouble() / 60));
+      print(val.waterActivityID);
+    });
+
+    // Update the state synchro
+    setState(() {
+      todayLitersSpent = sum;
+    });
+  }
+
 }
 
 //------------ Timer Dialog ---------------------
@@ -198,6 +239,9 @@ class _TimerDialogState extends State<TimerDialog> {
     } else {
       formattedTime = '$_timerCount seconds';
     }
+    setState(() {
+
+    });
 
     return Dialog(
       shape: RoundedRectangleBorder(
@@ -262,6 +306,7 @@ class _TimerDialogState extends State<TimerDialog> {
   }
 
   Timer? _timer;
+  double currentWaterFlow= 0;
 
   void _startOrResumeTimer() {
     setState(() {
@@ -280,13 +325,15 @@ class _TimerDialogState extends State<TimerDialog> {
     });
   }
 
-  void _startTimer() {
+  void _startTimer() async{
     const oneSecond = Duration(seconds: 1);
+    WaterActivity? waterActivity = await waterActivityService.getWaterActivity(_selectedUsageType);
+    currentWaterFlow = waterActivity!.waterFlow;
     _timer = Timer.periodic(oneSecond, (timer) {
       setState(() {
         if (!_timerPaused) {
           _timerCount++;
-          //_waterSpent = (_usageRates[_selectedUsageType] ?? 0.0) * _timerCount / 60.0;
+          _waterSpent = (currentWaterFlow ?? 0.0) * _timerCount / 60.0;
         }
       });
     });
@@ -328,8 +375,10 @@ Widget customButton(IconData icon, String label, BuildContext context) {
             builder: (BuildContext context) {
               return TimerDialog();
             },
+
           );
         }
+
       },
       style: ElevatedButton.styleFrom(
         foregroundColor: Colors.white,
