@@ -171,3 +171,7 @@ At the moment, we have partially implemented some features and some pages, such 
 #### Begin
 
 ![Sprint2Begin](Docs/sprint2begin.png)
+
+#### End
+
+![image](https://github.com/FEUP-LEIC-ES-2023-24/2LEIC08T2/assets/145542200/2b7dc9b0-ec23-463f-92aa-f1d4e6904988)
