@@ -48,6 +48,8 @@ dependencies:
   get: ^4.6.6
   provider: ^6.1.2
   firebase_app_check: ^0.2.2+4
+  country_list_pick: ^1.0.1+6
+  sqflite: ^2.3.3
 
 dev_dependencies:
   flutter_test:

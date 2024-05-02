@@ -1,20 +1,21 @@
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/material.dart';
-import 'package:waterxpto/LoginScreen.dart';
+import 'package:waterxpto/Pages/LoginScreen.dart';
 import 'package:waterxpto/models/WaterActivity.dart';
-import 'MainMenu.dart';
+import 'Pages/MainMenu.dart';
 import 'dart:async';
 import 'package:awesome_notifications/awesome_notifications.dart';
-import 'NotificationController.dart';
-import 'BackgroundServiceController.dart';
+import 'Controller/NotificationController.dart';
+import 'Controller/BackgroundServiceController.dart';
 import 'package:provider/provider.dart';
 import 'WaterSpentNotifier.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'database.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await BackgroundServiceController.initializeBackgroundService();
+  await initializeBackgroundService();
   await NotificationController.initializeNotifications();
 
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,13 +42,24 @@ Future<void> main() async {
   WaterActivityService waterActivityService = WaterActivityService();
   //waterActivityService.addWaterActivity(WaterActivity(name: "Shower", description: "Showering wastes a lot more water than it seems", waterFlow: 10.0));
 
+  var db = DatabaseHelper.instance;
+  List<Map<String, dynamic>> users = await db.queryAllUsers();
+  if (users.isEmpty) {
+    await db.insertUser({
+      'name': '',
+      'birthDate': '',
+      'email': '',
+      'nationality': '',
+    });
+  }
+
+  var water = await db.sumAllWaterFlows();
   runApp(
     ChangeNotifierProvider(
-      create: (context) => WaterSpentNotifier(waterSpent: 0.0),
+      create: (context) => WaterSpentNotifier(waterSpent: water),
       child: MyApp(),
     ),
   );
-
 }
 
 class MyApp extends StatefulWidget {
@@ -78,7 +90,7 @@ class _AppState extends State<MyApp> {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: LoginScreen(),
+      home: MainMenu(),
     );
   }
 }

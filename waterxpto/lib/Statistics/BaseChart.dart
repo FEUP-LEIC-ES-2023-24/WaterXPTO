@@ -9,10 +9,10 @@ abstract class BaseChart extends StatefulWidget {
   State<BaseChart> createState();
 
   int getAverage() {
-    if (liters.isEmpty) return 0;
-
-    double sum = liters.reduce((value, element) => value + element);
-    return (sum / liters.length).toInt();
+    List<double> filteredList = liters.where((liters) => liters != 0).toList();
+    if (filteredList.isEmpty) return 0;
+    double sum = filteredList.reduce((value, element) => value + element);
+    return (sum / filteredList.length).toInt();
   }
 
 }

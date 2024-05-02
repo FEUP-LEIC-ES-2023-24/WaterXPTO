@@ -27,7 +27,10 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-
+  Future<bool> isUserLoggedIn() async {
+    var user = _auth.currentUser;
+    return user != null;
+  }
 
   // Register user with email and password
   Future registerUser(String email, String password, String name, String nationality) async {

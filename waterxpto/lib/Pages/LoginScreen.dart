@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'MainMenu.dart';
 import 'RegisterScreen.dart';
-import 'models/User.dart';
+import '../models/User.dart';
+import 'Settings.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -45,7 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 if (result == "Sign in successful") {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => MainMenu()),
+                    MaterialPageRoute(builder: (context) => SettingsPage()),
                   );
                 } else {
                   // Handle error

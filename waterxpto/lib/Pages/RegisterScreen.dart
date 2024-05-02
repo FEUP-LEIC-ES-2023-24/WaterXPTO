@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'LoginScreen.dart';
 import 'MainMenu.dart';
-import 'models/User.dart'; // Import your AuthService
+import '../models/User.dart'; // Import your AuthService
 
 class RegisterScreen extends StatefulWidget {
 const RegisterScreen({Key? key}) : super(key: key);

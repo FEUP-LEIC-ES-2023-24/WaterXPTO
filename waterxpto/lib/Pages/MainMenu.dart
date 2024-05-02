@@ -6,9 +6,13 @@ import 'package:provider/provider.dart';
 import 'package:waterxpto/models/User.dart';
 import 'package:waterxpto/models/WaterActivity.dart';
 import 'package:waterxpto/models/WaterComsumption.dart';
-import 'Statistics/StatisticsContent.dart';
+import '../Statistics/StatisticsContent.dart';
+import '../database.dart';
+import 'Challenge.dart';
+import 'Goals.dart';
+import 'Settings.dart';
+import '../WaterSpentNotifier.dart';
 import 'dart:async';
-import 'WaterSpentNotifier.dart';
 
 class MainMenu extends StatefulWidget {
   const MainMenu({super.key});
@@ -24,6 +28,9 @@ class _MainMenuState extends State<MainMenu> {
   static  List<Widget> _widgetOptions = <Widget>[
     HomeContent(),
     StatisticsContent(),
+    Challenge(),
+    Goals(),
+    SettingsPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -45,6 +52,8 @@ class _MainMenuState extends State<MainMenu> {
 
 
       bottomNavigationBar: BottomNavigationBar(
+        showUnselectedLabels: true,
+        unselectedItemColor: Colors.grey,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -53,6 +62,18 @@ class _MainMenuState extends State<MainMenu> {
           BottomNavigationBarItem(
             icon: Icon(Icons.insert_chart),
             label: 'Statistics',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.supervised_user_circle_sharp),
+            label: 'Challenges',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.emoji_events_sharp),
+            label: 'Goals',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
           ),
         ],
         currentIndex: _selectedIndex,
@@ -72,10 +93,13 @@ class HomeContent extends StatefulWidget {
 }
 
 class _HomeContentState extends State<HomeContent> {
-  
-  final AuthService authService = AuthService();
-  final WaterConsumptionService waterConsumptionService = WaterConsumptionService();
-  final WaterActivityService waterActivityService = WaterActivityService();
+
+  AuthService? authService;
+  WaterConsumptionService? waterConsumptionService;
+  WaterActivityService? waterActivityService;
+
+  final DatabaseHelper _dbHelper = DatabaseHelper.instance;
+
   final List<String> messages = [
     "Turn off faucets tightly after use, fix leaks promptly and opt for shorter showers. Small actions yield big savings over time.",
     "Reuse water from washing fruits/veggies to water plants. Every drop counts!",
@@ -86,12 +110,8 @@ class _HomeContentState extends State<HomeContent> {
     "Use a dishwasher instead of hand-washing dishes to save water. It's a convenient way to conserve resources.",
     "Install a dual-flush toilet to reduce water usage. It's an eco-friendly way to save water and money.",
   ];
-
-  final Random random = Random();
   String message = "";
   double todayLitersSpent = 0;
-
-
 
   @override
   void initState() {
@@ -103,7 +123,6 @@ class _HomeContentState extends State<HomeContent> {
     message = messages[Random().nextInt(messages.length)];
     await updateTodayLitersSpent();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -130,7 +149,7 @@ class _HomeContentState extends State<HomeContent> {
                     textAlign: TextAlign.justify,
                     style: TextStyle(
                       color: Color(int.parse('0xFFFFFFFF')),
-                      fontSize: screenHeight < 800 ? calculateFontSize(message) / 1.25 : calculateFontSize(message) * 1.12,
+                      fontSize: screenHeight < 800 ? calculateFontSize(message) / 1.25 : calculateFontSize(message) * 1.06,
                       fontFamily: 'Montserrat',
                     ),
                   ),
@@ -140,11 +159,53 @@ class _HomeContentState extends State<HomeContent> {
             SizedBox(height: screenHeight < 800 ? 0.05 : 0.025),
             Image.asset('assets/img/WaterDrop2.png', width: screenHeight * factor, height: screenHeight * factor),
             SizedBox(height: screenHeight < 800 ? 0.05 : 0.025),
+
             Consumer<WaterSpentNotifier>(
               builder: (context, waterSpentNotifier, child) {
                 return Text('${todayLitersSpent.toStringAsFixed(1)} L today', style: TextStyle(fontSize: 25.0 * screenHeight / 600, fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.black));
               },
             ),
+
+            /*
+            //Nao consegue ler logo o valor (Precisa de clicar no botao), atualiza instantaneamente
+            StreamBuilder<double>(
+              stream: _waterSpentStream,
+              builder: (BuildContext context, AsyncSnapshot<double> streamSnapshot) {
+                if (streamSnapshot.connectionState == ConnectionState.waiting) {
+                  return ElevatedButton(
+                    onPressed: () async {
+                      int id = await _dbHelper.insertWaterConsumption({'waterSpent': 0.0});
+                      await _dbHelper.deleteWaterConsumption(id);
+
+                      //Usar para apagar dados
+                      //await _dbHelper.deleteAllWaterConsumption();
+                    },
+                    child: Text('Load Water Spent', style: TextStyle(fontSize: 15, fontFamily: 'Montserrat', color: Colors.black)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white60,
+                      side: BorderSide(color: Colors.white10, width: 3),
+                    ),
+                  );
+                } else if (streamSnapshot.hasError) {
+                  return Text('Error: ${streamSnapshot.error}');
+                } else {
+                  return Text('${streamSnapshot.data?.toStringAsFixed(2)} L today', style: TextStyle(fontSize: 25.0 * screenHeight / 600, fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.black));
+                }
+              },
+            ),
+
+            //Lê logo o valor, mas não atualiza instantaneamente
+            FutureBuilder<double>(
+              future: _dbHelper.sumAllWaterFlows(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  return Text('${snapshot.data?.toStringAsFixed(2)} L today', style: TextStyle(fontSize: 25.0 * screenHeight / 600, fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.black));
+                } else {
+                  return CircularProgressIndicator();
+                }
+              },
+            ),
+             */
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -172,20 +233,24 @@ class _HomeContentState extends State<HomeContent> {
 
 
   Future<void> updateTodayLitersSpent() async {
-    List<WaterConsumption> todayValues = await waterConsumptionService.getUserWaterConsumptionsInADay(authService.getCurrentUser()!.userID, DateUtils.dateOnly(DateTime.now()));
-    double sum = 0;
+    if (await AuthService().isUserLoggedIn()) {
+      List<WaterConsumption> todayValues = await waterConsumptionService!.getUserWaterConsumptionsInADay(authService!.getCurrentUser()!.userID, DateUtils.dateOnly(DateTime.now()));
+      double sum = 0;
 
-    // Perform asynchronous work outside of setState()
-    await Future.forEach(todayValues, (val) async {
-      WaterActivity? w = await waterActivityService.getWaterActivityByID(val.waterActivityID);
-      sum += (w!.waterFlow * (val.duration.toDouble() / 60));
-      print(val.waterActivityID);
-    });
+      // Perform asynchronous work outside of setState()
+      await Future.forEach(todayValues, (val) async {
+        WaterActivity? w = await waterActivityService!.getWaterActivityByID(val.waterActivityID);
+        sum += (w!.waterFlow * (val.duration.toDouble() / 60));
+        print(val.waterActivityID);
+      });
 
-    // Update the state synchro
-    setState(() {
-      todayLitersSpent = sum;
-    });
+      // Update the state synchro
+      setState(() {
+        todayLitersSpent = sum;
+      });
+    } else {
+      todayLitersSpent = await _dbHelper.sumAllWaterFlows();
+    }
   }
 
 }
@@ -346,16 +411,21 @@ class _TimerDialogState extends State<TimerDialog> {
       WaterSpentNotifier.of(context).updateWaterSpent(_waterSpent);
 
       //Send to consumption to the database
-
       WaterActivity? waterActivity = await waterActivityService.getWaterActivity(_selectedUsageType);
       WaterConsumption waterConsumption = WaterConsumption(waterActivityID: waterActivity!.id, userID: authService.getCurrentUser()!.userID, finishDate: DateTime.now(), duration: _timerCount);
       await waterService.addWaterConsumption(waterConsumption);
 
+      _updateDatabaseWithWaterSpent(_waterSpent);
       _timerCount = 0;
       _waterSpent = 0.0;
       _timer?.cancel();
     });
   }
+}
+
+Future<void> _updateDatabaseWithWaterSpent(double waterSpent) async {
+  var db = DatabaseHelper.instance;
+  await db.insertWaterConsumption({'waterSpent': waterSpent});
 }
 //---------------------------------------------------------
 
