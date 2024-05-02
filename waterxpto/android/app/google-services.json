@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "939565212838",
+    "project_id": "waterxpto",
+    "storage_bucket": "waterxpto.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:939565212838:android:20c3887a2ad380261f4067",
+        "android_client_info": {
+          "package_name": "com.example.waterxpto"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBdFNyJ_gOKO0GP8TQdn8k9ZEalRO98Qv8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:939565212838:android:9e6b4c165050bb041f4067",
+        "android_client_info": {
+          "package_name": "com.fdlas.e"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBdFNyJ_gOKO0GP8TQdn8k9ZEalRO98Qv8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
