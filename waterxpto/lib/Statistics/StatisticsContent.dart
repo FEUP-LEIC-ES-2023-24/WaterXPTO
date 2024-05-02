@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../database.dart';
 import 'BaseChart.dart';
 import 'MonthChart.dart';
 import 'WeekChart.dart';
@@ -8,72 +9,83 @@ import 'YearChart.dart';
 
 
 class StatisticsContent extends StatelessWidget {
-
-  //Stubs for user data from database
-  final int avg = 10;
-  //Week
-  final List<double> liters = [10, 35, 42, 53, 28, 41, 60];
-  final int nBelowNationalAvg = 40;
+  final DatabaseHelper db = DatabaseHelper.instance;
   final int nationalAverage = 184;
-
-  //Month
-  final List<double> monthLiters = [
-    40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 115, 120, 125, 130, 135,
-    140, 145, 150, 155, 160, 165, 170, 175, 180, 185
-  ];
-  final int monthBelowNationalAvg = 100; // Arbitrary number of liters below the national average
   final int monthNationalAverage = 310; // Arbitrary national average for a month
-
-  //Year
-  final List<double> yearLiters = [
-    200, 220, 240, 260, 280, 300, 320, 340, 360, 380, 400, 420
-  ];
-  final int yearBelowNationalAvg = 160; // Arbitrary number of liters below the national average
   final int yearNationalAverage = 400; // Arbitrary national average for a year
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              height: 50, // Adjust the height as needed
-              child: Center(
-                child: Text("Your History", style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500)),
+        length: 3,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                height: 50, // Adjust the height as needed
+                child: Center(
+                  child: Text("Your History", style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500)),
+                ),
               ),
-            ),
-            Container(
-              height: 50, // Adjust the height as needed
-              child: TabBar(
-                  indicator: BoxDecoration(),
-                  dividerColor: Colors.transparent,
-                  labelColor: Colors.transparent,
-                  splashFactory: NoSplash.splashFactory,
-                  overlayColor: null,
+              Container(
+                height: 50, // Adjust the height as needed
+                child: TabBar(
+                    indicator: BoxDecoration(),
+                    dividerColor: Colors.transparent,
+                    labelColor: Colors.transparent,
+                    splashFactory: NoSplash.splashFactory,
+                    overlayColor: null,
 
-                  tabs: [
-                    StatisticsTabButton(text: "week"),
-                    StatisticsTabButton(text: "month"),
-                    StatisticsTabButton(text: "year"),
-                  ]
+                    tabs: [
+                      StatisticsTabButton(text: "week"),
+                      StatisticsTabButton(text: "month"),
+                      StatisticsTabButton(text: "year"),
+                    ]
+                ),
               ),
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.9,
-              child: TabBarView(
-                children: [
-                  // Week Chart
-                  StatisticsTab(w: WeekChart(liters: liters), nationalAverage: nationalAverage,),
-                  StatisticsTab(w: MonthChart(liters: monthLiters), nationalAverage: monthNationalAverage,),
-                  StatisticsTab(w: YearChart(liters: yearLiters), nationalAverage: yearNationalAverage,),
-                ],
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.9,
+                child: TabBarView(
+                  children: [
+                    // Week Chart
+                    FutureBuilder<List<double>>(
+                      future: db.getWaterConsumptionForWeek(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          return StatisticsTab(w: WeekChart(liters: snapshot.data!), nationalAverage: nationalAverage,);
+                        } else {
+                          return CircularProgressIndicator(); // Show a loading spinner while waiting for data
+                        }
+                      },
+                    ),
+                    // Month Chart
+                    FutureBuilder<List<double>>(
+                      future: db.getWaterConsumptionForMonth(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          return StatisticsTab(w: MonthChart(liters: snapshot.data!), nationalAverage: monthNationalAverage,);
+                        } else {
+                          return CircularProgressIndicator(); // Show a loading spinner while waiting for data
+                        }
+                      },
+                    ),
+                    // Year Chart
+                    FutureBuilder<List<double>>(
+                      future: db.getWaterConsumptionForYear(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          return StatisticsTab(w: YearChart(liters: snapshot.data!), nationalAverage: yearNationalAverage,);
+                        } else {
+                          return CircularProgressIndicator(); // Show a loading spinner while waiting for data
+                        }
+                      },
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
-      )
+            ],
+          ),
+        )
     );
   }
 }
@@ -88,8 +100,8 @@ class StatisticsTabButton extends StatelessWidget {
 
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(500), // Adjust the radius as needed
-          color:  Color.fromRGBO(202, 244, 251, 1), // Color of the tab button
+          borderRadius: BorderRadius.circular(500),
+          color:  Color.fromRGBO(202, 244, 251, 1),
         ),
         padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), // Padding of the tab button
         child: Text(

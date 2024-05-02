@@ -156,4 +156,62 @@ class DatabaseHelper {
     Database db = await instance.database;
     await db.rawDelete('DELETE FROM WaterConsumption');
   }
+
+  Future<List<double>> getWaterConsumptionForWeek() async {
+    Database db = await instance.database;
+    String currentDate = DateTime.now().toIso8601String().substring(0, 10); // Get the current date in ISO 8601 format
+    List<double> weekData = List.filled(7, 0.0); // Initialize a list of 7 zeros
+    var result = await db.rawQuery('''
+      SELECT date, SUM(waterSpent) as Total
+      FROM WaterConsumption
+      WHERE date >= date('$currentDate', '-6 days')
+      GROUP BY date
+      ORDER BY date ASC
+    ''');
+    for (var row in result) {
+      int index = DateTime.parse(row['date'] as String).weekday - 1; // Get the day of the week (0-indexed)
+      weekData[index] = row['Total'] as double? ?? 0.0;
+    }
+    return weekData;
+  }
+
+  int daysInMonth(int year, int month) {
+    return month < 12 ? DateTime(year, month + 1, 0).day : DateTime(year + 1, 1, 0).day;
+  }
+
+  Future<List<double>> getWaterConsumptionForMonth() async {
+    Database db = await instance.database;
+    DateTime now = DateTime.now();
+    List<double> monthData = List.filled(daysInMonth(now.year, now.month), 0.0); // Initialize a list of zeros
+    var result = await db.rawQuery('''
+      SELECT date, SUM(waterSpent) as Total
+      FROM WaterConsumption
+      WHERE strftime('%Y-%m', date) = strftime('%Y-%m', '$now')
+      GROUP BY date
+      ORDER BY date ASC
+    ''');
+    for (var row in result) {
+      int index = DateTime.parse(row['date'] as String).day - 1; // Get the day of the month (0-indexed)
+      monthData[index] = row['Total'] as double? ?? 0.0;
+    }
+    return monthData;
+  }
+
+  Future<List<double>> getWaterConsumptionForYear() async {
+    Database db = await instance.database;
+    List<double> yearData = List.filled(12, 0.0);
+    var result = await db.rawQuery('''
+      SELECT strftime('%m', date) as Month, SUM(waterSpent) as Total
+      FROM WaterConsumption
+      WHERE strftime('%Y', date) = strftime('%Y', 'now')
+      GROUP BY Month
+      ORDER BY Month ASC
+    ''');
+    for (var row in result) {
+      int index = int.parse(row['Month'] as String) - 1;
+      yearData[index] = row['Total'] as double? ?? 0.0;
+    }
+    return yearData;
+  }
+
 }

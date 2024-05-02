@@ -143,6 +143,8 @@ class _HomeContentState extends State<HomeContent> {
             SizedBox(height: screenHeight < 800 ? 0.05 : 0.025),
             Image.asset('assets/img/WaterDrop2.png', width: screenHeight * factor, height: screenHeight * factor),
             SizedBox(height: screenHeight < 800 ? 0.05 : 0.025),
+
+            //Nao consegue ler logo o valor (Precisa de clicar no botao), atualiza instantaneamente
             StreamBuilder<double>(
               stream: _waterSpentStream,
               builder: (BuildContext context, AsyncSnapshot<double> streamSnapshot) {
@@ -151,10 +153,14 @@ class _HomeContentState extends State<HomeContent> {
                     onPressed: () async {
                       int id = await _dbHelper.insertWaterConsumption({'waterSpent': 0.0});
                       await _dbHelper.deleteWaterConsumption(id);
+
+                      //Usar para apagar dados
+                      //await _dbHelper.deleteAllWaterConsumption();
                     },
-                    child: Text('Load Water Spent', style: TextStyle(fontSize: 15, fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.white)),
+                    child: Text('Load Water Spent', style: TextStyle(fontSize: 15, fontFamily: 'Montserrat', color: Colors.black)),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(int.parse('0xFF027088')), // Set the button color to teal
+                      backgroundColor: Colors.white60,
+                      side: BorderSide(color: Colors.white10, width: 3),
                     ),
                   );
                 } else if (streamSnapshot.hasError) {
@@ -164,6 +170,19 @@ class _HomeContentState extends State<HomeContent> {
                 }
               },
             ),
+            //Lê logo o valor, mas não atualiza instantaneamente
+            /*
+            FutureBuilder<double>(
+              future: _dbHelper.sumAllWaterFlows(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  return Text('${snapshot.data?.toStringAsFixed(2)} L today', style: TextStyle(fontSize: 25.0 * screenHeight / 600, fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.black));
+                } else {
+                  return CircularProgressIndicator();
+                }
+              },
+            ),
+             */
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),

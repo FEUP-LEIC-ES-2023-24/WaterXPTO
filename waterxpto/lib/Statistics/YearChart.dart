@@ -17,13 +17,17 @@ class YearChart extends BaseChart {
 
 class _YearChartState extends State<YearChart> {
 
-  List<FlSpot> waterUsageData = List.generate(13, (index) {
-    // Assuming random water usage between 1 and 10 liters per day
-    double waterUsage = Random().nextDouble() * 100 + 1;
-    // Day of the month (1-indexed)
-    double dayOfMonth = index + 1;
-    return FlSpot(dayOfMonth, waterUsage);
-  });
+  List<FlSpot> waterUsageData = [];
+
+  @override
+  void initState() {
+    super.initState();
+    waterUsageData = List.generate(widget.liters.length, (index) {
+      double monthOfYear = index + 1;
+      double waterUsage = widget.liters[index];
+      return FlSpot(monthOfYear, waterUsage);
+    });
+  }
 
   List<String> titles= [
     'J', // January
