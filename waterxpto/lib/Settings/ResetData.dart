@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:waterxpto/database.dart';
+import 'package:waterxpto/Controller/database.dart';
 
 class ResetData extends StatefulWidget {
   @override
@@ -7,17 +7,6 @@ class ResetData extends StatefulWidget {
 }
 
 class _ResetDataState extends State<ResetData> {
-  final dbHelper = DatabaseHelper.instance;
-
-  void _resetData() async {
-    await dbHelper.updateUser({
-      'name': '',
-      'birthDate': '',
-      'email': '',
-      'nationality': '',
-    });
-    await dbHelper.deleteAllWaterConsumption();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +57,13 @@ class _ResetDataState extends State<ResetData> {
           Center(
               child: TextButton(
                 onPressed: () {
-                  _resetData();
+                  DatabaseHelper.instance.resetDatabase();
+                  DatabaseHelper.instance.insertUser({
+                    'name': '',
+                    'birthDate': '',
+                    'email': '',
+                  });
+                  Navigator.pop(context);
                 },
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all<Color>(Colors.red),

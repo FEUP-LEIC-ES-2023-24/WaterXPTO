@@ -7,11 +7,11 @@ import 'package:waterxpto/models/User.dart';
 import 'package:waterxpto/models/WaterActivity.dart';
 import 'package:waterxpto/models/WaterComsumption.dart';
 import '../Statistics/StatisticsContent.dart';
-import '../database.dart';
+import '../Controller/database.dart';
 import 'Challenge.dart';
 import 'Goals.dart';
 import 'Settings.dart';
-import '../WaterSpentNotifier.dart';
+import '../Controller/WaterSpentNotifier.dart';
 import 'dart:async';
 
 class MainMenu extends StatefulWidget {
@@ -94,11 +94,12 @@ class HomeContent extends StatefulWidget {
 
 class _HomeContentState extends State<HomeContent> {
 
-  AuthService? authService;
-  WaterConsumptionService? waterConsumptionService;
-  WaterActivityService? waterActivityService;
+  final AuthService authService = AuthService();
+  final WaterConsumptionService waterConsumptionService = WaterConsumptionService();
+  final WaterActivityService waterActivityService = WaterActivityService();
 
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
+  Stream<double>? _waterSpentStream;
 
   final List<String> messages = [
     "Turn off faucets tightly after use, fix leaks promptly and opt for shorter showers. Small actions yield big savings over time.",
@@ -111,17 +112,18 @@ class _HomeContentState extends State<HomeContent> {
     "Install a dual-flush toilet to reduce water usage. It's an eco-friendly way to save water and money.",
   ];
   String message = "";
-  double todayLitersSpent = 0;
+  //double todayLitersSpent = 0;
 
   @override
   void initState() {
     super.initState();
     _initializeState();
+    _waterSpentStream = _dbHelper.waterSpentStream;
   }
 
   Future<void> _initializeState() async {
     message = messages[Random().nextInt(messages.length)];
-    await updateTodayLitersSpent();
+    //await updateTodayLitersSpent();
   }
 
   @override
@@ -160,13 +162,14 @@ class _HomeContentState extends State<HomeContent> {
             Image.asset('assets/img/WaterDrop2.png', width: screenHeight * factor, height: screenHeight * factor),
             SizedBox(height: screenHeight < 800 ? 0.05 : 0.025),
 
+            /*
             Consumer<WaterSpentNotifier>(
               builder: (context, waterSpentNotifier, child) {
-                return Text('${todayLitersSpent.toStringAsFixed(1)} L today', style: TextStyle(fontSize: 25.0 * screenHeight / 600, fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.black));
+                return Text('${double.parse(waterSpentNotifier.waterSpent.toStringAsFixed(2))} L today', style: TextStyle(fontSize: 25.0 * screenHeight / 600, fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.black));
               },
             ),
+             */
 
-            /*
             //Nao consegue ler logo o valor (Precisa de clicar no botao), atualiza instantaneamente
             StreamBuilder<double>(
               stream: _waterSpentStream,
@@ -193,7 +196,7 @@ class _HomeContentState extends State<HomeContent> {
                 }
               },
             ),
-
+            /*
             //Lê logo o valor, mas não atualiza instantaneamente
             FutureBuilder<double>(
               future: _dbHelper.sumAllWaterFlows(),
@@ -231,7 +234,7 @@ class _HomeContentState extends State<HomeContent> {
   }
 
 
-
+/*
   Future<void> updateTodayLitersSpent() async {
     if (await AuthService().isUserLoggedIn()) {
       List<WaterConsumption> todayValues = await waterConsumptionService!.getUserWaterConsumptionsInADay(authService!.getCurrentUser()!.userID, DateUtils.dateOnly(DateTime.now()));
@@ -252,7 +255,7 @@ class _HomeContentState extends State<HomeContent> {
       todayLitersSpent = await _dbHelper.sumAllWaterFlows();
     }
   }
-
+*/
 }
 
 //------------ Timer Dialog ---------------------
@@ -404,20 +407,23 @@ class _TimerDialogState extends State<TimerDialog> {
     });
   }
 
-  void _stopTimer()  {
-    setState(() async {
-      _timerRunning = false;
-      _timerPaused = true;
-      WaterSpentNotifier.of(context).updateWaterSpent(_waterSpent);
-
-      //Send to consumption to the database
+  void _stopTimer() async {
+    if (await authService.isUserLoggedIn()) {
       WaterActivity? waterActivity = await waterActivityService.getWaterActivity(_selectedUsageType);
       WaterConsumption waterConsumption = WaterConsumption(waterActivityID: waterActivity!.id, userID: authService.getCurrentUser()!.userID, finishDate: DateTime.now(), duration: _timerCount);
       await waterService.addWaterConsumption(waterConsumption);
+    }
+    setState(() {
+      _timerRunning = false;
+      _timerPaused = true;
 
-      _updateDatabaseWithWaterSpent(_waterSpent);
-      _timerCount = 0;
-      _waterSpent = 0.0;
+      if (_waterSpent != 0) {
+        //WaterSpentNotifier.of(context).updateWaterSpent(_waterSpent);
+        _updateDatabaseWithWaterSpent(_waterSpent);
+      }
+      print(authService.isUserLoggedIn());
+        _timerCount = 0;
+        _waterSpent = 0.0;
       _timer?.cancel();
     });
   }

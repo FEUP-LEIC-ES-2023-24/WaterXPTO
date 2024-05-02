@@ -8,10 +8,10 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'Controller/NotificationController.dart';
 import 'Controller/BackgroundServiceController.dart';
 import 'package:provider/provider.dart';
-import 'WaterSpentNotifier.dart';
+import 'Controller/WaterSpentNotifier.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
-import 'database.dart';
+import 'Controller/firebase_options.dart';
+import 'Controller/database.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -53,13 +53,12 @@ Future<void> main() async {
     });
   }
 
-  var water = await db.sumAllWaterFlows();
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => WaterSpentNotifier(waterSpent: water),
-      child: MyApp(),
-    ),
-  );
+  print(users.length);
+  var cenas = await db.queryAllWaterConsumptions();
+  for (var tow in cenas) {
+    print(tow);
+  }
+  runApp(MyApp());
 }
 
 class MyApp extends StatefulWidget {

@@ -44,10 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 String password = _passwordController.text;
                 String result = await _authService.signInUser(email, password);
                 if (result == "Sign in successful") {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => SettingsPage()),
-                  );
+                  Navigator.pop(context);
                 } else {
                   // Handle error
                   ScaffoldMessenger.of(context).showSnackBar(

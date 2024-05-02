@@ -4,7 +4,7 @@ import 'package:path/path.dart';
 
 class DatabaseHelper {
   static final _databaseName = "WaterXpto.db";
-  static final _databaseVersion = 3;
+  static final _databaseVersion = 4;
   final _waterSpentController = StreamController<double>.broadcast();
   static Database? _database;
   static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
@@ -56,10 +56,17 @@ class DatabaseHelper {
     await db.execute('''
       CREATE TABLE WaterConsumption (
         id INTEGER PRIMARY KEY,
-        waterSpent REAL
+        waterSpent REAL,
         date TEXT
       );
     ''');
+  }
+
+  Future<void> resetDatabase() async {
+    String path = join(await getDatabasesPath(), _databaseName);
+    await deleteDatabase(path);
+    _database = null;
+    _database = await _initDatabase();
   }
 
   //User CRUD operations
@@ -158,8 +165,8 @@ class DatabaseHelper {
 
   Future<List<double>> getWaterConsumptionForWeek() async {
     Database db = await instance.database;
-    String currentDate = DateTime.now().toIso8601String().substring(0, 10); // Get the current date in ISO 8601 format
-    List<double> weekData = List.filled(7, 0.0); // Initialize a list of 7 zeros
+    String currentDate = DateTime.now().toIso8601String().substring(0, 10);
+    List<double> weekData = List.filled(7, 0.0);
     var result = await db.rawQuery('''
       SELECT date, SUM(waterSpent) as Total
       FROM WaterConsumption
@@ -168,7 +175,7 @@ class DatabaseHelper {
       ORDER BY date ASC
     ''');
     for (var row in result) {
-      int index = DateTime.parse(row['date'] as String).weekday - 1; // Get the day of the week (0-indexed)
+      int index = DateTime.parse(row['date'] as String).weekday - 1;
       weekData[index] = row['Total'] as double? ?? 0.0;
     }
     return weekData;
@@ -181,7 +188,7 @@ class DatabaseHelper {
   Future<List<double>> getWaterConsumptionForMonth() async {
     Database db = await instance.database;
     DateTime now = DateTime.now();
-    List<double> monthData = List.filled(daysInMonth(now.year, now.month), 0.0); // Initialize a list of zeros
+    List<double> monthData = List.filled(daysInMonth(now.year, now.month), 0.0);
     var result = await db.rawQuery('''
       SELECT date, SUM(waterSpent) as Total
       FROM WaterConsumption
@@ -190,7 +197,7 @@ class DatabaseHelper {
       ORDER BY date ASC
     ''');
     for (var row in result) {
-      int index = DateTime.parse(row['date'] as String).day - 1; // Get the day of the month (0-indexed)
+      int index = DateTime.parse(row['date'] as String).day - 1;
       monthData[index] = row['Total'] as double? ?? 0.0;
     }
     return monthData;

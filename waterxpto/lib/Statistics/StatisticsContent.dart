@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../database.dart';
+import '../Controller/database.dart';
 import 'BaseChart.dart';
 import 'MonthChart.dart';
 import 'WeekChart.dart';
