@@ -70,85 +70,98 @@ class _UserDataState extends State<UserData> {
                     children: <Widget>[
                       Container(
                         width: screenWidth * 0.9,
+                        height: 55,
                         decoration: BoxDecoration(
                           color: Color(int.parse('0xFF027088')),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: TextFormField(
-                          initialValue: user['name'] ?? '',
-                          style: TextStyle(color: Colors.white),
-                          decoration: InputDecoration(
-                            labelText: 'Name',
-                            filled: true,
-                            labelStyle: TextStyle(color: Colors.white),
-                            fillColor: Color(int.parse('0xFF027088')),
-                            contentPadding: EdgeInsets.all(10.0),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide.none,
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: TextFormField(
+                            initialValue: user['name'] ?? '',
+                            style: TextStyle(color: Colors.white),
+                            decoration: InputDecoration(
+                              filled: true,
+                              labelText: 'Name',
+                              labelStyle: TextStyle(color: Colors.white),
+                              fillColor: Color(int.parse('0xFF027088')),
+                              contentPadding: EdgeInsets.all(10.0),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide.none,
+                              ),
                             ),
+                            onSaved: (value) {
+                              name = value;
+                            },
                           ),
-                          onSaved: (value) {
-                            name = value;
-                          },
                         ),
                       ),
                       SizedBox(height: 10),
 
                       Container(
                         width: screenWidth * 0.9,
+                        height: 55,
                         decoration: BoxDecoration(
                           color: Color(int.parse('0xFF027088')),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: TextFormField(
-                          initialValue: user['birthDate'] ?? '',
-                          style: TextStyle(color: Colors.white),
-                          decoration: InputDecoration(
-                            filled: true,
-                            labelText: 'Birth Date',
-                            labelStyle: TextStyle(color: Colors.white),
-                            fillColor: Color(int.parse('0xFF027088')),
-                            contentPadding: EdgeInsets.all(10.0),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide.none,
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: TextFormField(
+                            initialValue: user['birthDate'] ?? '',
+                            style: TextStyle(color: Colors.white),
+                            decoration: InputDecoration(
+                              filled: true,
+                              labelText: 'Birth Date',
+                              labelStyle: TextStyle(color: Colors.white),
+                              fillColor: Color(int.parse('0xFF027088')),
+                              contentPadding: EdgeInsets.all(10.0),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide.none,
+                              ),
                             ),
+                            onSaved: (value) {
+                              birthDate = value;
+                            },
                           ),
-                          onSaved: (value) {
-                            birthDate = value;
-                          },
                         ),
                       ),
                       SizedBox(height: 10),
                       Container(
                         width: screenWidth * 0.9,
+                        height: 55,
                         decoration: BoxDecoration(
                           color: Color(int.parse('0xFF027088')),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: TextFormField(
-                          initialValue: user['email'] ?? '',
-                          style: TextStyle(color: Colors.white),
-                          decoration: InputDecoration(
-                            filled: true,
-                            labelText: 'Email',
-                            labelStyle: TextStyle(color: Colors.white),
-                            fillColor: Color(int.parse('0xFF027088')),
-                            contentPadding: EdgeInsets.all(10.0),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide.none,
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: TextFormField(
+                            initialValue: user['email'] ?? '',
+                            style: TextStyle(color: Colors.white),
+                            decoration: InputDecoration(
+                              filled: true,
+                              labelText: 'Email',
+                              labelStyle: TextStyle(color: Colors.white),
+                              fillColor: Color(int.parse('0xFF027088')),
+                              contentPadding: EdgeInsets.all(10.0),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide.none,
+                              ),
                             ),
+                            onSaved: (value) {
+                              email = value;
+                            },
                           ),
-                          onSaved: (value) {
-                            email = value;
-                          },
                         ),
                       ),
                       SizedBox(height: 10),
                       Container(
                         width: screenWidth * 0.9,
+                        height: 65,
                         decoration: BoxDecoration(
                           color: Color(int.parse('0xFF027088')),
                           borderRadius: BorderRadius.circular(10),
@@ -173,27 +186,32 @@ class _UserDataState extends State<UserData> {
                       ),
 
 
-                      ElevatedButton(
-                        child: Text('Submit', style: TextStyle(color: Colors.white)),
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green
-                        ),
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            _formKey.currentState!.save();
-                            updateUserData();
-                            Navigator.pop(context);
-                          }
-                        },
-                      ),
-                      ElevatedButton(
-                        child: Text('Cancel', style: TextStyle(color: Colors.white)),
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ElevatedButton(
+                            child: Text('Submit', style: TextStyle(color: Colors.white)),
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green
+                            ),
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                _formKey.currentState!.save();
+                                updateUserData();
+                                Navigator.pop(context);
+                              }
+                            },
+                          ),
+                          ElevatedButton(
+                            child: Text('Cancel', style: TextStyle(color: Colors.white)),
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red
+                            ),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ],
                       ),
                     ],
                   ),

@@ -75,8 +75,7 @@ class DatabaseHelper {
 
   Future<int> updateUser(Map<String, dynamic> row) async {
     Database db = await instance.database;
-    int id = row['id'];
-    return await db.update('User', row, where: 'id = ?', whereArgs: [id]);
+    return await db.update('User', row, where: 'id = ?', whereArgs: [1]);
   }
 
   Future<int> deleteUser(int id) async {
