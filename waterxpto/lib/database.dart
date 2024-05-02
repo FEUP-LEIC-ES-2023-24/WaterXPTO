@@ -4,7 +4,7 @@ import 'package:path/path.dart';
 
 class DatabaseHelper {
   static final _databaseName = "WaterXpto.db";
-  static final _databaseVersion = 2;
+  static final _databaseVersion = 3;
   final _waterSpentController = StreamController<double>.broadcast();
   static Database? _database;
   static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
@@ -29,7 +29,7 @@ class DatabaseHelper {
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (newVersion > oldVersion) {
       await db.execute('''
-        ALTER TABLE WaterConsumption ADD COLUMN waterSpent REAL;
+        ALTER TABLE WaterConsumption ADD COLUMN date TEXT;
       ''');
     }
   }
@@ -57,6 +57,7 @@ class DatabaseHelper {
       CREATE TABLE WaterConsumption (
         id INTEGER PRIMARY KEY,
         waterSpent REAL
+        date TEXT
       );
     ''');
   }
@@ -110,6 +111,7 @@ class DatabaseHelper {
     int result = 0;
     try {
       await db.transaction((txn) async {
+        row['date'] = DateTime.now().toIso8601String();
         result = await txn.insert('WaterConsumption', row);
       });
       _updateWaterSpentStream();
@@ -137,7 +139,8 @@ class DatabaseHelper {
 
   Future<double> sumAllWaterFlows() async {
     Database db = await instance.database;
-    var result = await db.rawQuery('SELECT SUM(waterSpent) as Total FROM WaterConsumption');
+    String currentDate = DateTime.now().toIso8601String().substring(0, 10); // Get the current date in ISO 8601 format
+    var result = await db.rawQuery('SELECT SUM(waterSpent) as Total FROM WaterConsumption WHERE date LIKE "$currentDate%"');
     double total = result[0]['Total'] as double? ?? 0.0;
     print('Sum of all water flows: $total\n');
     return total;
@@ -147,5 +150,10 @@ class DatabaseHelper {
     double total = await sumAllWaterFlows();
     print('Updating water spent stream with total: $total\n');
     _waterSpentController.add(total);
+  }
+
+  Future<void> deleteAllWaterConsumption() async {
+    Database db = await instance.database;
+    await db.rawDelete('DELETE FROM WaterConsumption');
   }
 }
