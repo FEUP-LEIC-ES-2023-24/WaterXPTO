@@ -171,3 +171,26 @@ At the moment, we have partially implemented some features and some pages, such 
 #### Begin
 
 ![Sprint2Begin](Docs/sprint2begin.png)
+
+#### End
+
+![image](https://github.com/FEUP-LEIC-ES-2023-24/2LEIC08T2/assets/145542200/2b7dc9b0-ec23-463f-92aa-f1d4e6904988)
+
+#### What went well?
+- We were able to successfully implement the storage of water data of the user.
+- We were able to display the water data using graphics similar to the mockups.
+
+#### What went wrong?
+- We were not able to implement all the features we wanted to.
+- We were not able to have the release ready in the practical class.
+
+#### What will we do differently next time?
+- We will try to implement the features we want to earlier.
+
+#### How satisfied are we with the progress?
+- We are satisfied with the progress we made, but we could have done more.
+
+#### Completed user stories
+- [As an Unregistered User, I want to be able to create an account so that I can keep data on multiple devices.](https://github.com/orgs/FEUP-LEIC-ES-2023-24/projects/37/views/1?pane=issue&itemId=57782351)
+- [As an Unregistered User, I want to be able to have access to most of the app’s features so that I don’t have to login.](https://github.com/orgs/FEUP-LEIC-ES-2023-24/projects/37/views/1?pane=issue&itemId=56479404)
+  
