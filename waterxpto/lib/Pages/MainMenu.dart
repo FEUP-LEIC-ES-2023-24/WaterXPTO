@@ -1,12 +1,12 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../database.dart';
 import 'Challenge.dart';
 import 'Goals.dart';
 import 'Settings.dart';
-import 'Statistics/StatisticsContent.dart';
+import '../Statistics/StatisticsContent.dart';
 import 'dart:async';
-import 'WaterSpentNotifier.dart';
 
 class MainMenu extends StatefulWidget {
   const MainMenu({super.key});
@@ -87,6 +87,8 @@ class HomeContent extends StatefulWidget {
 }
 
 class _HomeContentState extends State<HomeContent> {
+  final DatabaseHelper _dbHelper = DatabaseHelper.instance;
+  Stream<double>? _waterSpentStream;
   final List<String> messages = [
     "Turn off faucets tightly after use, fix leaks promptly and opt for shorter showers. Small actions yield big savings over time.",
     "Reuse water from washing fruits/veggies to water plants. Every drop counts!",
@@ -97,6 +99,12 @@ class _HomeContentState extends State<HomeContent> {
     "Use a dishwasher instead of hand-washing dishes to save water. It's a convenient way to conserve resources.",
     "Install a dual-flush toilet to reduce water usage. It's an eco-friendly way to save water and money.",
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _waterSpentStream = _dbHelper.waterSpentStream;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -135,9 +143,25 @@ class _HomeContentState extends State<HomeContent> {
             SizedBox(height: screenHeight < 800 ? 0.05 : 0.025),
             Image.asset('assets/img/WaterDrop2.png', width: screenHeight * factor, height: screenHeight * factor),
             SizedBox(height: screenHeight < 800 ? 0.05 : 0.025),
-            Consumer<WaterSpentNotifier>(
-              builder: (context, waterSpentNotifier, child) {
-                return Text('${double.parse(waterSpentNotifier.waterSpent.toStringAsFixed(2))} L today', style: TextStyle(fontSize: 25.0 * screenHeight / 600, fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.black));
+            StreamBuilder<double>(
+              stream: _waterSpentStream,
+              builder: (BuildContext context, AsyncSnapshot<double> streamSnapshot) {
+                if (streamSnapshot.connectionState == ConnectionState.waiting) {
+                  return ElevatedButton(
+                    onPressed: () async {
+                      int id = await _dbHelper.insertWaterConsumption({'waterSpent': 0.0});
+                      await _dbHelper.deleteWaterConsumption(id);
+                    },
+                    child: Text('Load Water Spent', style: TextStyle(fontSize: 15, fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.white)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(int.parse('0xFF027088')), // Set the button color to teal
+                    ),
+                  );
+                } else if (streamSnapshot.hasError) {
+                  return Text('Error: ${streamSnapshot.error}');
+                } else {
+                  return Text('${streamSnapshot.data?.toStringAsFixed(2)} L today', style: TextStyle(fontSize: 25.0 * screenHeight / 600, fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.black));
+                }
               },
             ),
             Expanded(
@@ -296,12 +320,17 @@ class _TimerDialogState extends State<TimerDialog> {
     setState(() {
       _timerRunning = false;
       _timerPaused = true;
-      WaterSpentNotifier.of(context).updateWaterSpent(_waterSpent);
+      _updateDatabaseWithWaterSpent(_waterSpent);
       _timerCount = 0;
       _waterSpent = 0.0;
       _timer?.cancel();
     });
   }
+}
+
+Future<void> _updateDatabaseWithWaterSpent(double waterSpent) async {
+  var db = DatabaseHelper.instance;
+  await db.insertWaterConsumption({'waterSpent': waterSpent});
 }
 //---------------------------------------------------------
 

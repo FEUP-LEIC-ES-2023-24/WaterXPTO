@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../BackgroundServiceController.dart';
+import '../Controller/BackgroundServiceController.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 
 class NotificationSettings extends StatefulWidget {

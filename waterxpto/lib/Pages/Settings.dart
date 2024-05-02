@@ -1,9 +1,10 @@
 import 'package:country_list_pick/support/code_country.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'Settings/AboutUs.dart';
-import 'Settings/CountrySelection.dart';
-import 'Settings/NotificationSettings.dart';
+import '../Settings/AboutUs.dart';
+import '../Settings/CountrySelection.dart';
+import '../Settings/NotificationSettings.dart';
+import '../Settings/UserData.dart';
 
 class Settings extends StatefulWidget {
   @override
@@ -34,6 +35,17 @@ class _SettingsState extends State<Settings> {
             },
           ),
           Divider(),
+          ListTile(
+            title: Text('Data'),
+            trailing: Icon(Icons.arrow_forward_ios),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => UserData()),
+              );
+            },
+          ),
+          Divider(),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
@@ -48,24 +60,6 @@ class _SettingsState extends State<Settings> {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => NotificationSettings()),
-              );
-            },
-          ),
-          Divider(),
-          ListTile(
-            title: Text('Country'),
-            subtitle: Text(selectedCountry != null ? selectedCountry!.name! : 'Select your country'),
-            onTap: () {
-              showDialog(
-                context: context,
-                builder: (context) => CountrySelection(
-                  onCountrySelected: (country) {
-                    setState(() {
-                      selectedCountry = country;
-                    });
-                  },
-                  initialSelection: selectedCountry != null ? selectedCountry!.code! : '',
-                ),
               );
             },
           ),

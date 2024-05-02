@@ -1,24 +1,31 @@
 import 'package:flutter/material.dart';
-import 'MainMenu.dart';
+import 'Pages/MainMenu.dart';
 import 'dart:async';
 import 'package:awesome_notifications/awesome_notifications.dart';
-import 'NotificationController.dart';
-import 'BackgroundServiceController.dart';
+import 'Controller/NotificationController.dart';
+import 'Controller/BackgroundServiceController.dart';
 import 'package:provider/provider.dart';
-import 'WaterSpentNotifier.dart';
+import 'database.dart';
 
-
+Future<void> addUser() async {
+  var db = DatabaseHelper.instance;
+  List<Map<String, dynamic>> users = await db.queryAllUsers();
+  if (users.isEmpty) {
+    await db.insertUser({
+      'name': '',
+      'birthDate': '',
+      'email': '',
+      'nationality': '',
+    });
+  }
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeBackgroundService();
   await NotificationController.initializeNotifications();
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => WaterSpentNotifier(waterSpent: 0.0),
-      child: MyApp(),
-    ),
-  );
+  await addUser();
+  runApp(MyApp());
 }
 
 class MyApp extends StatefulWidget {
