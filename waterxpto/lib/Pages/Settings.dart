@@ -2,9 +2,9 @@ import 'package:country_list_pick/support/code_country.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../Settings/AboutUs.dart';
-import '../Settings/CountrySelection.dart';
 import '../Settings/NotificationSettings.dart';
 import '../Settings/UserData.dart';
+import '../Settings/ResetData.dart';
 
 class Settings extends StatefulWidget {
   @override
@@ -36,7 +36,7 @@ class _SettingsState extends State<Settings> {
           ),
           Divider(),
           ListTile(
-            title: Text('Data'),
+            title: Text('User Info'),
             trailing: Icon(Icons.arrow_forward_ios),
             onTap: () {
               Navigator.push(
@@ -68,7 +68,10 @@ class _SettingsState extends State<Settings> {
             title: Text('Reset Data'),
             trailing: Icon(Icons.arrow_forward_ios),
             onTap: () {
-
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ResetData()),
+              );
             },
           ),
           Divider(),
