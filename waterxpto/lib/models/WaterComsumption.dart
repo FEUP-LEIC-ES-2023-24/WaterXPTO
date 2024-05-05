@@ -3,6 +3,9 @@ import 'dart:ffi';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import 'User.dart';
+import 'WaterActivity.dart';
+
 
 
 class WaterConsumption {
@@ -42,6 +45,9 @@ class WaterConsumption {
 
 class WaterConsumptionService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final AuthService authService = AuthService();
+  final WaterActivityService waterActivityService = WaterActivityService();
+
 
   Future<void> addWaterConsumption(WaterConsumption waterConsumption) async {
     try {
@@ -50,6 +56,21 @@ class WaterConsumptionService {
       print("Error adding water consumption: $e");
     }
   }
+
+  Future<double> updateTodayLitersSpent() async {
+    double sum = 0;
+    if (await authService.isUserLoggedIn()) {
+      List<WaterConsumption> todayValues = await getUserWaterConsumptionsInADay(authService.getCurrentUser()!.userID, DateUtils.dateOnly(DateTime.now()));
+
+      // Perform asynchronous work outside of setState()
+      await Future.forEach(todayValues, (val) async {
+        WaterActivity? w = await waterActivityService.getWaterActivityByID(val.waterActivityID);
+        sum += (w!.waterFlow * (val.duration.toDouble() / 60));
+      });
+    }
+    return sum;
+  }
+
   Future<List<WaterConsumption>> getUserWaterConsumptionsInADay(String? userID, DateTime date) async {
     List<WaterConsumption> result = [];
     try {

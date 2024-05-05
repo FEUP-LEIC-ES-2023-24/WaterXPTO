@@ -117,7 +117,7 @@ class DatabaseHelper {
     int result = 0;
     try {
       await db.transaction((txn) async {
-        row['date'] = DateTime.now().toIso8601String();
+        row['date'] = DateTime.now().toIso8601String().substring(0, 10);
         result = await txn.insert('WaterConsumption', row);
       });
       _updateWaterSpentStream();
@@ -145,7 +145,7 @@ class DatabaseHelper {
 
   Future<double> sumAllWaterFlows() async {
     Database db = await instance.database;
-    String currentDate = DateTime.now().toIso8601String().substring(0, 10); // Get the current date in ISO 8601 format
+    String currentDate = DateTime.now().toIso8601String().substring(0, 10);
     var result = await db.rawQuery('SELECT SUM(waterSpent) as Total FROM WaterConsumption WHERE date LIKE "$currentDate%"');
     double total = result[0]['Total'] as double? ?? 0.0;
     print('Sum of all water flows: $total\n');

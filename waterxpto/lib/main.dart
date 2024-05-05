@@ -53,12 +53,12 @@ Future<void> main() async {
     });
   }
 
-  print(users.length);
-  var cenas = await db.queryAllWaterConsumptions();
-  for (var tow in cenas) {
-    print(tow);
-  }
-  runApp(MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => WaterSpentNotifier(),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
