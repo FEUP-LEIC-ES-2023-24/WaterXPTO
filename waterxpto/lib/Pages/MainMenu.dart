@@ -1,11 +1,9 @@
-import 'dart:ffi';
 import 'dart:math';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:waterxpto/models/User.dart';
 import 'package:waterxpto/models/WaterActivity.dart';
-import 'package:waterxpto/models/WaterComsumption.dart';
+import 'package:waterxpto/models/WaterConsumption.dart';
 import '../Statistics/StatisticsContent.dart';
 import '../Controller/database.dart';
 import 'Challenge.dart';
@@ -25,11 +23,11 @@ class _MainMenuState extends State<MainMenu> {
 
   int _selectedIndex = 0;
 
-  static  List<Widget> _widgetOptions = <Widget>[
-    HomeContent(),
+  static  final List<Widget> _widgetOptions = <Widget>[
+    const HomeContent(),
     StatisticsContent(),
-    Challenge(),
-    Goals(),
+    const Challenge(),
+    const Goals(),
     SettingsPage(),
   ];
 
@@ -43,7 +41,7 @@ class _MainMenuState extends State<MainMenu> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('WaterXPTO', style: TextStyle(color: Colors.black)),
+        title: const Text('WaterXPTO', style: TextStyle(color: Colors.black)),
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
@@ -111,7 +109,6 @@ class _HomeContentState extends State<HomeContent> {
     "Install a dual-flush toilet to reduce water usage. It's an eco-friendly way to save water and money.",
   ];
   String message = "";
-  double todayLitersSpent = 0;
 
   @override
   void initState() {
@@ -134,7 +131,7 @@ class _HomeContentState extends State<HomeContent> {
           children: <Widget>[
             Container(
               alignment: Alignment.topCenter,
-              margin: EdgeInsets.only(top: 0.0),
+              margin: const EdgeInsets.only(top: 0.0),
               child: Container(
                 width: MediaQuery.of(context).size.width * 0.9,
                 height: MediaQuery.of(context).size.height * 0.115,
@@ -143,7 +140,7 @@ class _HomeContentState extends State<HomeContent> {
                   borderRadius: BorderRadius.circular(8.0),
                 ),
                 child: Padding(
-                  padding: EdgeInsets.all(10.0),
+                  padding: const EdgeInsets.all(10.0),
                   child: Text(
                     message,
                     textAlign: TextAlign.justify,
@@ -165,37 +162,39 @@ class _HomeContentState extends State<HomeContent> {
               future: authService.isUserLoggedIn(),
               builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
+                  return const CircularProgressIndicator();
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 } else if (snapshot.data == true) {
-                    print('Today liters spent: $todayLitersSpent');
-                    return Text('${todayLitersSpent.toStringAsFixed(2)} L today', style: TextStyle(fontSize: 25.0 * screenHeight / 600, fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.black));
-                  } else {
-                    return StreamBuilder<double>(
-                      stream: _dbHelper.waterSpentStream,
-                      initialData: 0.0,
-                      builder: (BuildContext context, AsyncSnapshot<double> streamSnapshot) {
-                        if (streamSnapshot.connectionState == ConnectionState.waiting) {
-                          return ElevatedButton(
-                            onPressed: () async {
-                              int id = await _dbHelper.insertWaterConsumption({'waterSpent': 0.0});
-                              await _dbHelper.deleteWaterConsumption(id);
-                            },
-                            child: Text('Load Water Spent', style: TextStyle(fontSize: 15, fontFamily: 'Montserrat', color: Colors.black)),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white60,
-                              side: BorderSide(color: Colors.white10, width: 3),
-                            ),
-                          );
-                        } else if (streamSnapshot.hasError) {
-                          return Text('Error: ${streamSnapshot.error}');
-                        } else {
-                          return Text('${streamSnapshot.data?.toStringAsFixed(2)} L today', style: TextStyle(fontSize: 25.0 * screenHeight / 600, fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.black));
-                        }
-                      },
-                    );
-                  }
+                  return Consumer<WaterSpentNotifier>(
+                    builder: (context, waterSpentNotifier, child) {
+                      return Text('${waterSpentNotifier.todayLitersSpent.toStringAsFixed(2)} L today', style: TextStyle(fontSize: 25.0 * screenHeight / 600, fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.black));
+                    },
+                  );
+                } else {
+                  return StreamBuilder<double>(
+                    stream: _dbHelper.waterSpentStream,
+                    initialData: 0.0,
+                    builder: (BuildContext context, AsyncSnapshot<double> streamSnapshot) {
+                      if (streamSnapshot.connectionState == ConnectionState.waiting) {
+                        return ElevatedButton(
+                          onPressed: () async {
+                            int id = await _dbHelper.insertWaterConsumption({'waterSpent': 0.0});
+                            await _dbHelper.deleteWaterConsumption(id);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white60,
+                            side: const BorderSide(color: Colors.white10, width: 3),
+                          ),
+                          child: const Text('Load Water Spent', style: TextStyle(fontSize: 15, fontFamily: 'Montserrat', color: Colors.black)),
+                        );
+                      } else if (streamSnapshot.hasError) {
+                        return Text('Error: ${streamSnapshot.error}');
+                      } else {
+                        return Text('${streamSnapshot.data?.toStringAsFixed(2)} L today', style: TextStyle(fontSize: 25.0 * screenHeight / 600, fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.black));
+                      }
+                    },
+                  );}
                 },
               ),
             /*
@@ -268,13 +267,9 @@ class _HomeContentState extends State<HomeContent> {
       await Future.forEach(todayValues, (val) async {
         WaterActivity? w = await waterActivityService.getWaterActivityByID(val.waterActivityID);
         sum += (w!.waterFlow * (val.duration.toDouble() / 60));
-        print(val.waterActivityID);
       });
 
-      // Update the state synchronously
-      setState(() {
-        todayLitersSpent = sum;
-      });
+      WaterSpentNotifier.of(context, listen: false).setTodayLitersSpent(sum);
     }
   }
 }
@@ -282,6 +277,8 @@ class _HomeContentState extends State<HomeContent> {
 //------------ Timer Dialog ---------------------
 
 class TimerDialog extends StatefulWidget {
+  const TimerDialog({super.key});
+
   @override
   _TimerDialogState createState() => _TimerDialogState();
 }
@@ -301,6 +298,7 @@ class _TimerDialogState extends State<TimerDialog> {
   late String _selectedUsageType = "";
   List<String> _usageTypes = [];
 
+  @override
   void initState() {
     super.initState();
     _loadUsageTypes(); // Call the async method inside initState
@@ -338,7 +336,7 @@ class _TimerDialogState extends State<TimerDialog> {
         borderRadius: BorderRadius.circular(20.0),
       ),
       child: Container(
-        padding: EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(20.0),
         height: MediaQuery
             .of(context)
             .size
@@ -348,9 +346,9 @@ class _TimerDialogState extends State<TimerDialog> {
           children: [
             Text(
               'Timer: $formattedTime',
-              style: TextStyle(fontSize: 18),
+              style: const TextStyle(fontSize: 18),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             DropdownButtonFormField<String>(
               value: _selectedUsageType,
               items: _usageTypes.map((String type) {
@@ -364,12 +362,12 @@ class _TimerDialogState extends State<TimerDialog> {
                   _selectedUsageType = newValue!;
                 });
               },
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Usage Type',
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -384,11 +382,11 @@ class _TimerDialogState extends State<TimerDialog> {
                   onPressed: () {
                     _stopTimer();
                   },
-                  child: Text('Stop'),
+                  child: const Text('Stop'),
                 ),
               ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
               'Water Spent: ${_waterSpent.toStringAsFixed(1)} liters',
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -445,7 +443,7 @@ class _TimerDialogState extends State<TimerDialog> {
             finishDate: DateTime.now(),
             duration: _timerCount);
         await waterService.addWaterConsumption(waterConsumption);
-        WaterSpentNotifier.of(context, listen: false).updateTodayLitersSpent();
+        await WaterSpentNotifier.of(context, listen: false).updateTodayLitersSpent();
       } else {
         await _updateDatabaseWithWaterSpent(_waterSpent);
       }
@@ -482,7 +480,7 @@ Widget customButton(IconData icon, String label, BuildContext context) {
           showDialog(
             context: context,
             builder: (BuildContext context) {
-              return TimerDialog();
+              return const TimerDialog();
             },
 
           );

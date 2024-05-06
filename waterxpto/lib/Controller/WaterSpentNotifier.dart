@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
 import '../models/User.dart';
-import '../models/WaterComsumption.dart';
+import '../models/WaterConsumption.dart';
 
 class WaterSpentNotifier extends ChangeNotifier {
   double waterSpent = 0.0;
@@ -11,15 +11,22 @@ class WaterSpentNotifier extends ChangeNotifier {
 
   double get todayLitersSpent => waterSpent;
 
-  void updateTodayLitersSpent() async {
+  Future<void> updateTodayLitersSpent() async {
     if (await _authService.isUserLoggedIn()) {
-      waterSpent = await _waterConsumptionService.updateTodayLitersSpent();
+      double newValue = await _waterConsumptionService.updateTodayLitersSpent();
+      print('New value from database: $newValue');  // Debug print
+      waterSpent = newValue;
     } else {
       waterSpent = 0;
     }
+    print('Updated waterSpent: $waterSpent');  // Debug print
     notifyListeners();
   }
 
+  void setTodayLitersSpent(double value) {
+    waterSpent = value;
+    notifyListeners();
+  }
 
   static WaterSpentNotifier of(BuildContext context, {bool listen = false}) {
     return Provider.of<WaterSpentNotifier>(context, listen: listen);
