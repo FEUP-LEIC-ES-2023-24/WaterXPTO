@@ -27,7 +27,7 @@ class _MainMenuState extends State<MainMenu> {
     const HomeContent(),
     StatisticsContent(),
     const Challenge(),
-    const Goals(),
+    Goals(),
     SettingsPage(),
   ];
 
@@ -157,7 +157,6 @@ class _HomeContentState extends State<HomeContent> {
             Image.asset('assets/img/WaterDrop2.png', width: screenHeight * factor, height: screenHeight * factor),
             SizedBox(height: screenHeight < 800 ? 0.05 : 0.025),
 
-            //Nao consegue ler logo o valor (Precisa de clicar no botao), atualiza instantaneamente
             FutureBuilder<bool>(
               future: authService.isUserLoggedIn(),
               builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
@@ -197,43 +196,6 @@ class _HomeContentState extends State<HomeContent> {
                   );}
                 },
               ),
-            /*
-            StreamBuilder<double>(
-              stream: _waterSpentStream,
-              builder: (BuildContext context, AsyncSnapshot<double> streamSnapshot) {
-                if (streamSnapshot.connectionState == ConnectionState.waiting) {
-                  return ElevatedButton(
-                    onPressed: () async {
-                      int id = await _dbHelper.insertWaterConsumption({'waterSpent': 0.0});
-                      await _dbHelper.deleteWaterConsumption(id);
-                    },
-                    child: Text('Load Water Spent', style: TextStyle(fontSize: 15, fontFamily: 'Montserrat', color: Colors.black)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white60,
-                      side: BorderSide(color: Colors.white10, width: 3),
-                    ),
-                  );
-                } else if (streamSnapshot.hasError) {
-                  return Text('Error: ${streamSnapshot.error}');
-                } else {
-                  return Text('${streamSnapshot.data?.toStringAsFixed(2)} L today', style: TextStyle(fontSize: 25.0 * screenHeight / 600, fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.black));
-                }
-              },
-            ),
-            */
-            /*
-            //Lê logo o valor, mas não atualiza instantaneamente
-            FutureBuilder<double>(
-              future: _dbHelper.sumAllWaterFlows(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  return Text('${snapshot.data?.toStringAsFixed(2)} L today', style: TextStyle(fontSize: 25.0 * screenHeight / 600, fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.black));
-                } else {
-                  return CircularProgressIndicator();
-                }
-              },
-            ),
-             */
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -485,7 +447,6 @@ Widget customButton(IconData icon, String label, BuildContext context) {
 
           );
         }
-
       },
       style: ElevatedButton.styleFrom(
         foregroundColor: Colors.white,

@@ -4,7 +4,7 @@ import 'package:path/path.dart';
 
 class DatabaseHelper {
   static final _databaseName = "WaterXpto.db";
-  static final _databaseVersion = 4;
+  static final _databaseVersion = 5;
   final _waterSpentController = StreamController<double>.broadcast();
   static Database? _database;
   static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
@@ -27,11 +27,7 @@ class DatabaseHelper {
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    if (newVersion > oldVersion) {
-      await db.execute('''
-        ALTER TABLE WaterConsumption ADD COLUMN date TEXT;
-      ''');
-    }
+    if (newVersion > oldVersion) {}
   }
   Future _onCreate(Database db, int version) async {
     await db.execute('''
@@ -44,13 +40,12 @@ class DatabaseHelper {
       );
     ''');
     await db.execute('''
-      CREATE TABLE Goal (
-        id INTEGER PRIMARY KEY,
-        name TEXT,
-        description TEXT,
-        deadline TEXT,
-        userId INTEGER,
-        FOREIGN KEY(userId) REFERENCES User(id)
+    CREATE TABLE Goal (
+      id INTEGER PRIMARY KEY,
+      name TEXT,
+      description TEXT,
+      deadline TEXT,
+      type TEXT
       );
     ''');
     await db.execute('''
