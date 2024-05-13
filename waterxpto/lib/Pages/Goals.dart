@@ -24,8 +24,7 @@ class _GoalsState extends State<Goals> {
           Center(
               child:  Column(
                 children: <Widget>[
-                  SingleChildScrollView(
-                    child:FutureBuilder<bool>(
+                    FutureBuilder<bool>(
                       future: authService.isUserLoggedIn(),
                       builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
                         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -36,12 +35,93 @@ class _GoalsState extends State<Goals> {
                           //TODO: Goals list registered user
                           return const CircularProgressIndicator();
                         } else {
-                          //TODO: Goals list not registered user
-                          return const CircularProgressIndicator();
+                          // Goals list not registered user
+                          return Column(
+                            children: [
+                              Container(
+                                height: screenHeight * 0.7,
+                                child: FutureBuilder<List<Map<String, dynamic>>>(
+                                  future: _dbHelper.queryAllGoals(),
+                                  builder: (BuildContext context, AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
+                                    if (snapshot.connectionState == ConnectionState.waiting) {
+                                      return const CircularProgressIndicator();
+                                    } else if (snapshot.hasError) {
+                                      return Text('Error: ${snapshot.error}');
+                                    } else {
+                                      return ListView.builder(
+                                        itemCount: snapshot.data!.length,
+                                        itemBuilder: (BuildContext context, int index) {
+                                          Map<String, dynamic> goal = snapshot.data![index];
+                                          return GestureDetector(
+                                            onTap: () {
+                                              showDialog(
+                                                context: context,
+                                                builder: (BuildContext context) {
+                                                  return Theme(
+                                                    data: Theme.of(context).copyWith(dialogBackgroundColor: Color(0xFF029cbd)),
+                                                    child: AlertDialog(
+                                                      title: Text(goal['name'], style: const TextStyle(color: Colors.white)),
+                                                      content: SingleChildScrollView(
+                                                        child: ListBody(
+                                                          children: <Widget>[
+                                                            Text('Goal: ${goal['type']}', style: const TextStyle(color: Colors.white)),
+                                                            Text('Value: ${goal['value']}', style: const TextStyle(color: Colors.white)),
+                                                            Text('From: ${goal['creationDate']}', style: const TextStyle(color: Colors.white)),
+                                                            Text('Until: ${goal['deadline']}', style: const TextStyle(color: Colors.white)),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      actions: <Widget>[
+                                                        TextButton(
+                                                          child: const Text('Close', style: TextStyle(color: Colors.white)),
+                                                          onPressed: () {
+                                                            Navigator.of(context).pop();
+                                                          },
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  );
+                                                },
+                                              );
+                                            },
+                                            child: Container(
+                                              width: screenWidth * 0.14,
+                                              margin: const EdgeInsets.all(10.0),
+                                              padding: const EdgeInsets.all(10.0),
+                                              decoration: BoxDecoration(
+                                                color: Color(int.parse('0xFF027088')),
+                                                borderRadius: BorderRadius.circular(8.0),
+                                              ),
+                                              child: Column(
+                                                children: <Widget>[
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: <Widget>[
+                                                      Text(goal['name'], style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.white)),
+                                                      Text('Deadline: ${goal['deadline']}', style: const TextStyle(color: Colors.white)),
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: <Widget>[
+                                                      Text('${goal['value']}', style: const TextStyle(color: Colors.white)),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    }
+                                  },
+                                )
+                              ),
+                            ],
+                          );
                         }
                       },
                     ),
-                  ),
                 ],
               ),
           ),
@@ -62,17 +142,17 @@ class _GoalsState extends State<Goals> {
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
-                  backgroundColor: Color(int.parse('0xFF027088')),
+                  backgroundColor: Color(int.parse('0xff81d6e9')),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text(
+                child: Text(
                   'Add new Goal',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: Color(int.parse('0xFF027088')),
                   ),
                 ),
               ),
@@ -92,6 +172,7 @@ class GoalsDialog extends StatefulWidget {
 }
 
 class _GoalsDialogState extends State<GoalsDialog> {
+  final DatabaseHelper _dbHelper = DatabaseHelper.instance;
   final _formKey = GlobalKey<FormState>();
   String _goalName = '';
   DateTime _deadline = DateTime.now();
@@ -202,7 +283,15 @@ class _GoalsDialogState extends State<GoalsDialog> {
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         _formKey.currentState!.save();
-                        // TODO: Save the goal to the database
+                        _dbHelper.insertGoal({
+                          'name': _goalName,
+                          'value': _goalValue,
+                          'type': _goalType,
+                          'deadline': _deadline.toIso8601String().substring(0, 10),
+                          'creationDate': DateTime.now().toIso8601String().substring(0, 10),
+                          'value': 0.0,
+                        });
+                        Navigator.pop(context);
                       }
                     },
                     style: ElevatedButton.styleFrom(

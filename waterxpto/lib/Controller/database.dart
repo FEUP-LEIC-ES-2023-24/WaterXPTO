@@ -44,6 +44,8 @@ class DatabaseHelper {
       id INTEGER PRIMARY KEY,
       name TEXT,
       description TEXT,
+      value REAL,
+      creationDate TEXT,
       deadline TEXT,
       type TEXT
       );
