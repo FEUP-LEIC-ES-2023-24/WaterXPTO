@@ -395,6 +395,12 @@ class _TimerDialogState extends State<TimerDialog> {
   }
 
   void _stopTimer() async {
+    setState(() {
+      _timer?.cancel();
+      _timerRunning = false;
+      _timerPaused = true;
+    });
+
     if (_waterSpent != 0) {
       bool isLoggedIn = await authService.isUserLoggedIn();
       if (isLoggedIn) {
@@ -412,11 +418,8 @@ class _TimerDialogState extends State<TimerDialog> {
     }
 
     setState(() {
-      _timerRunning = false;
-      _timerPaused = true;
       _timerCount = 0;
       _waterSpent = 0.0;
-      _timer?.cancel();
     });
   }
 
@@ -424,6 +427,17 @@ class _TimerDialogState extends State<TimerDialog> {
     var db = DatabaseHelper.instance;
     int id = await db.insertWaterConsumption({'waterSpent': waterSpent});
     print('Water spent updated in database with id: $id');
+
+    List<Map<String, dynamic>> goals = await db.queryAllGoals();
+    print('Updating goals with water spent: $waterSpent\n');
+    for (var goal in goals) {
+      double new_value = goal['value'] + waterSpent;
+
+      Map<String, dynamic> newGoal = Map.from(goal);
+      newGoal['value'] = new_value;
+
+      await db.updateGoal(newGoal);
+    }
   }
 }
 //---------------------------------------------------------

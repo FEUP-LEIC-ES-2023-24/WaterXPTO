@@ -115,5 +115,7 @@ void onStart(ServiceInstance service) async {
     //Inicia o timer para notificacoes
     Timer.periodic(const Duration(seconds: 10000), (timer) async {
       NotificationController.randomTipNotification();
+
+      //Verificar deadline e notificar
     });
 }

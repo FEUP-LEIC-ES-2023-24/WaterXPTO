@@ -21,24 +21,25 @@ class _GoalsState extends State<Goals> {
     double screenWidth = MediaQuery.of(context).size.width;
     return Stack(
         children: [
-          Center(
+          SingleChildScrollView(
+            child: Center(
               child:  Column(
                 children: <Widget>[
-                    FutureBuilder<bool>(
-                      future: authService.isUserLoggedIn(),
-                      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const CircularProgressIndicator();
-                        } else if (snapshot.hasError) {
-                          return Text('Error: ${snapshot.error}');
-                        } else if (snapshot.data == true) {
-                          //TODO: Goals list registered user
-                          return const CircularProgressIndicator();
-                        } else {
-                          // Goals list not registered user
-                          return Column(
-                            children: [
-                              Container(
+                  FutureBuilder<bool>(
+                    future: authService.isUserLoggedIn(),
+                    builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else if (snapshot.data == true) {
+                        //TODO: Goals list registered user
+                        return const CircularProgressIndicator();
+                      } else {
+                        // Goals list not registered user
+                        return Column(
+                          children: [
+                            Container(
                                 height: screenHeight * 0.7,
                                 child: FutureBuilder<List<Map<String, dynamic>>>(
                                   future: _dbHelper.queryAllGoals(),
@@ -72,6 +73,14 @@ class _GoalsState extends State<Goals> {
                                                         ),
                                                       ),
                                                       actions: <Widget>[
+                                                        TextButton(
+                                                          child: const Text('Delete', style: TextStyle(color: Colors.white)),
+                                                          onPressed: () async {
+                                                            await _dbHelper.deleteGoal(goal['id']);
+                                                            Navigator.of(context).pop();
+                                                            setState(() {});
+                                                          },
+                                                        ),
                                                         TextButton(
                                                           child: const Text('Close', style: TextStyle(color: Colors.white)),
                                                           onPressed: () {
@@ -116,14 +125,15 @@ class _GoalsState extends State<Goals> {
                                     }
                                   },
                                 )
-                              ),
-                            ],
-                          );
-                        }
-                      },
-                    ),
+                            ),
+                          ],
+                        );
+                      }
+                    },
+                  ),
                 ],
               ),
+            ),
           ),
           Align(
             alignment: Alignment.bottomCenter,
