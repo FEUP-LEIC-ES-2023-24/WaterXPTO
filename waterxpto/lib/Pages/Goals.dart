@@ -66,7 +66,7 @@ class _GoalsState extends State<Goals> {
                                                         child: ListBody(
                                                           children: <Widget>[
                                                             Text('Goal: ${goal['type']}', style: const TextStyle(color: Colors.white)),
-                                                            Text('Value: ${goal['value']}', style: const TextStyle(color: Colors.white)),
+                                                            Text(calculateGoalProgress(goal), style: const TextStyle(color: Colors.white)),
                                                             Text('From: ${goal['creationDate']}', style: const TextStyle(color: Colors.white)),
                                                             Text('Until: ${goal['deadline']}', style: const TextStyle(color: Colors.white)),
                                                           ],
@@ -113,7 +113,7 @@ class _GoalsState extends State<Goals> {
                                                   Row(
                                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                     children: <Widget>[
-                                                      Text('${goal['value']}', style: const TextStyle(color: Colors.white)),
+                                                      Text('${goal['value']} of ${goal['goalValue']}', style: const TextStyle(color: Colors.white)),
                                                     ],
                                                   ),
                                                 ],
@@ -295,7 +295,7 @@ class _GoalsDialogState extends State<GoalsDialog> {
                         _formKey.currentState!.save();
                         _dbHelper.insertGoal({
                           'name': _goalName,
-                          'value': _goalValue,
+                          'goalValue': _goalValue,
                           'type': _goalType,
                           'deadline': _deadline.toIso8601String().substring(0, 10),
                           'creationDate': DateTime.now().toIso8601String().substring(0, 10),
@@ -319,3 +319,10 @@ class _GoalsDialogState extends State<GoalsDialog> {
   }
 }
 
+String calculateGoalProgress(Map<String, dynamic> goal) {
+  if (goal['type'] == 'Use less daily water') {
+    return 'Progress: ${goal['value']} liters today (goal: ${goal['goalValue']} liters)';
+  } else {
+    return 'Progress: ${goal['value']} of ${goal['goalValue']} liters';
+  }
+}

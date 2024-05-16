@@ -8,6 +8,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 
 import 'NotificationController.dart';
+import 'database.dart';
 
 
 class BackgroundServiceController {
@@ -97,6 +98,7 @@ Future<void> onActionReceivedMethod(ReceivedAction receivedAction) async {
 @pragma('vm:entry-point')
 void onStart(ServiceInstance service) async {
   DartPluginRegistrant.ensureInitialized();
+  DatabaseHelper _dbHelper = DatabaseHelper.instance;
 
   if (service is AndroidServiceInstance) {
     service.on('setAsForeground').listen((event) {
@@ -113,9 +115,16 @@ void onStart(ServiceInstance service) async {
   });
 
     //Inicia o timer para notificacoes
-    Timer.periodic(const Duration(seconds: 10000), (timer) async {
+    Timer.periodic(const Duration(seconds: 5), (timer) async {
       NotificationController.randomTipNotification();
 
-      //Verificar deadline e notificar
+      Future<List<Map<String, dynamic>>> goals = _dbHelper.queryAllGoals();
+      for (var goal in await goals) {
+        if (goal['deadline'] == DateTime.now().toIso8601String().substring(0, 10)) {
+          Future<bool> completedSuccessfully = _dbHelper.verifyGoal(goal);
+          NotificationController.goalCompletedNotification(goal, completedSuccessfully);
+          _dbHelper.deleteGoal(goal['id']);
+        }
+      }
     });
 }
