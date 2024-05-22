@@ -6,6 +6,7 @@ import 'package:waterxpto/models/WaterActivity.dart';
 import 'package:waterxpto/models/WaterConsumption.dart';
 import '../Statistics/StatisticsContent.dart';
 import '../Controller/database.dart';
+import '../models/Goal.dart';
 import 'Challenge.dart';
 import 'Goals.dart';
 import 'Settings.dart';
@@ -412,6 +413,11 @@ class _TimerDialogState extends State<TimerDialog> {
             duration: _timerCount);
         await waterService.addWaterConsumption(waterConsumption);
         await WaterSpentNotifier.of(context, listen: false).updateTodayLitersSpent();
+        Future<List<Goal>> goals = GoalService().getAllGoals();
+        for (var goal in await goals) {
+          goal.value += _waterSpent;
+          await GoalService().updateGoal(goal);
+        }
       } else {
         await _updateDatabaseWithWaterSpent(_waterSpent);
       }

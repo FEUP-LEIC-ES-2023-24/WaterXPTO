@@ -6,7 +6,9 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:waterxpto/models/User.dart';
 
+import '../models/Goal.dart';
 import 'NotificationController.dart';
 import 'database.dart';
 
@@ -118,12 +120,24 @@ void onStart(ServiceInstance service) async {
     Timer.periodic(const Duration(seconds: 5), (timer) async {
       NotificationController.randomTipNotification();
 
-      Future<List<Map<String, dynamic>>> goals = _dbHelper.queryAllGoals();
-      for (var goal in await goals) {
-        if (goal['deadline'] == DateTime.now().toIso8601String().substring(0, 10)) {
-          Future<bool> completedSuccessfully = _dbHelper.verifyGoal(goal);
-          NotificationController.goalCompletedNotification(goal, completedSuccessfully);
-          _dbHelper.deleteGoal(goal['id']);
+      Future<bool> isLogged = AuthService().isUserLoggedIn();
+      if (await isLogged) {
+        Future<List<Map<String, dynamic>>> goals = GoalService().getGoalsByUserID(AuthService().getCurrentUser()!.userID);
+        for (var goal in await goals) {
+          if (goal['deadline'] == DateTime.now().toIso8601String().substring(0, 10)) {
+            Future<bool> completedSuccessfully = GoalService().verifyGoal(goal);
+            NotificationController.goalCompletedNotification(goal, completedSuccessfully);
+            GoalService().deleteGoal(goal['id']);
+          }
+        }
+      } else {
+        Future<List<Map<String, dynamic>>> goals = _dbHelper.queryAllGoals();
+        for (var goal in await goals) {
+          if (goal['deadline'] == DateTime.now().toIso8601String().substring(0, 10)) {
+            Future<bool> completedSuccessfully = _dbHelper.verifyGoal(goal);
+            NotificationController.goalCompletedNotification(goal, completedSuccessfully);
+            _dbHelper.deleteGoal(goal['id']);
+          }
         }
       }
     });

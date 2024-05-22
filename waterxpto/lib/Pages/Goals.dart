@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../Controller/database.dart';
+import '../models/Goal.dart';
 import '../models/User.dart';
 
 class Goals extends StatefulWidget {
@@ -13,6 +14,7 @@ class Goals extends StatefulWidget {
 
 class _GoalsState extends State<Goals> {
   final AuthService authService = AuthService();
+  final GoalService goalService = GoalService();
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
 
   @override
@@ -32,23 +34,20 @@ class _GoalsState extends State<Goals> {
                         return const CircularProgressIndicator();
                       } else if (snapshot.hasError) {
                         return Text('Error: ${snapshot.error}');
-                      } else if (snapshot.data == true) {
-                        //TODO: Goals list registered user
-                        return const CircularProgressIndicator();
                       } else {
-                        // Goals list not registered user
                         return Column(
                           children: [
                             Container(
                                 height: screenHeight * 0.7,
                                 child: FutureBuilder<List<Map<String, dynamic>>>(
-                                  future: _dbHelper.queryAllGoals(),
+                                  future: snapshot.data! ? goalService.getGoalsByUserID(authService.getCurrentUser()!.userID) : _dbHelper.queryAllGoals(),
                                   builder: (BuildContext context, AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
                                     if (snapshot.connectionState == ConnectionState.waiting) {
                                       return const CircularProgressIndicator();
                                     } else if (snapshot.hasError) {
                                       return Text('Error: ${snapshot.error}');
                                     } else {
+                                      print(snapshot.data?.length);
                                       return ListView.builder(
                                         itemCount: snapshot.data!.length,
                                         itemBuilder: (BuildContext context, int index) {
@@ -76,7 +75,11 @@ class _GoalsState extends State<Goals> {
                                                         TextButton(
                                                           child: const Text('Delete', style: TextStyle(color: Colors.white)),
                                                           onPressed: () async {
-                                                            await _dbHelper.deleteGoal(goal['id']);
+                                                            if (await authService.isUserLoggedIn()) {
+                                                              goalService.deleteGoal(goal['name']);
+                                                            } else {
+                                                              _dbHelper.deleteGoal(goal['id']);
+                                                            }
                                                             Navigator.of(context).pop();
                                                             setState(() {});
                                                           },
@@ -182,7 +185,9 @@ class GoalsDialog extends StatefulWidget {
 }
 
 class _GoalsDialogState extends State<GoalsDialog> {
+  final isLoggedIn = AuthService().isUserLoggedIn();
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
+  final goalService = GoalService();
   final _formKey = GlobalKey<FormState>();
   String _goalName = '';
   DateTime _deadline = DateTime.now();
@@ -290,19 +295,37 @@ class _GoalsDialogState extends State<GoalsDialog> {
                     child: const Text('Cancel', style: TextStyle(color: Colors.white)),
                   ),
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         _formKey.currentState!.save();
-                        _dbHelper.insertGoal({
-                          'name': _goalName,
-                          'goalValue': _goalValue,
-                          'type': _goalType,
-                          'deadline': _deadline.toIso8601String().substring(0, 10),
-                          'creationDate': DateTime.now().toIso8601String().substring(0, 10),
-                          'value': 0.0,
-                        });
-                        Navigator.pop(context);
+                        if (await isLoggedIn) {
+                          goalService.addGoal(Goal(
+                            name: _goalName,
+                            goalValue: _goalValue,
+                            type: _goalType,
+                            deadline: _deadline.toIso8601String().substring(0, 10),
+                            creationDate: DateTime.now().toIso8601String().substring(0, 10),
+                            value: 0.0,
+                            userID: AuthService().getCurrentUser()?.userID,
+                          ));
+                          print("Firebase goal added successfully\n");
+                          print(_goalName);
+                          print(AuthService().getCurrentUser()?.userID);
+                          print(await isLoggedIn);
+                        } else {
+                          _dbHelper.insertGoal({
+                            'name': _goalName,
+                            'goalValue': _goalValue,
+                            'type': _goalType,
+                            'deadline': _deadline.toIso8601String().substring(0, 10),
+                            'creationDate': DateTime.now().toIso8601String().substring(0, 10),
+                            'value': 0.0,
+                          });
+                          print("Sqlite goal added successfully\n");
+                          print(_goalName);
+                        }
                       }
+                      Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.lightGreen,
@@ -324,5 +347,13 @@ String calculateGoalProgress(Map<String, dynamic> goal) {
     return 'Progress: ${goal['value']} liters today (goal: ${goal['goalValue']} liters)';
   } else {
     return 'Progress: ${goal['value']} of ${goal['goalValue']} liters';
+  }
+}
+
+String calculateGoalProgressFirebase(Goal goal) {
+  if (goal.type == 'Use less daily water') {
+    return 'Progress: ${goal.value} liters today (goal: ${goal.goalValue} liters)';
+  } else {
+    return 'Progress: ${goal.value} of ${goal.goalValue} liters';
   }
 }
