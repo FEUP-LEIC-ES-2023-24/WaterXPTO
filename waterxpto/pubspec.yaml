@@ -50,6 +50,7 @@ dependencies:
   firebase_app_check: ^0.2.2+4
   country_list_pick: ^1.0.1+6
   sqflite: ^2.3.3
+  mockito: ^5.4.4
 
 dev_dependencies:
   flutter_test:

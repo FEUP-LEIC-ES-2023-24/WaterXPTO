@@ -33,8 +33,6 @@ class AuthService {
   })  : _auth = auth ?? FirebaseAuth.instance,
         _firestore = firestore ?? FirebaseFirestore.instance;
 
-
-
   Future<bool> isUserLoggedIn() async {
     var user = _auth.currentUser;
     return user != null;

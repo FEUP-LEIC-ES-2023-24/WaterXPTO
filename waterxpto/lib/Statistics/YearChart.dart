@@ -47,7 +47,7 @@ class _YearChartState extends State<YearChart> {
   Widget build(BuildContext context) {
     return LineChart(
         LineChartData(
-            maxY: 150,
+            maxY: 350,
             minY: 0,
 
             borderData: FlBorderData(

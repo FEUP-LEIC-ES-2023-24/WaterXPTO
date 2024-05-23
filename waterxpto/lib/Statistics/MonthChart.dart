@@ -31,7 +31,7 @@ class _MonthChartState extends State<MonthChart> {
   Widget build(BuildContext context) {
     return LineChart(
         LineChartData(
-            maxY: 150,
+            maxY: 60,
             minY: 0,
 
             borderData: FlBorderData(

@@ -61,4 +61,19 @@ class NotificationController {
       )
     );
   }
+
+  static void goalCompletedNotification(Map<String, dynamic> goal, Future<bool> completedSuccessfully) {
+    completedSuccessfully.then((value) {
+      AwesomeNotifications().createNotification(
+          content: NotificationContent(
+          id: 11,
+          channelKey: 'basic_channel',
+          actionType: ActionType.Default,
+          title: value ? 'Goal completed! 🎉' : 'Goal failed! 😢',
+          body: value ? 'Congratulations! You have completed your goal: ${goal['name']}.' : 'You have failed to complete your goal: ${goal['name']}.',
+          category: NotificationCategory.Reminder,
+        )
+      );
+    });
+  }
 }
