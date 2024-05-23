@@ -1,4 +1,6 @@
+import 'package:country_list_pick/support/code_country.dart';
 import 'package:flutter/material.dart';
+import '../Settings/CountrySelection.dart';
 import 'LoginScreen.dart';
 import 'MainMenu.dart';
 import '../models/User.dart'; // Import your AuthService
@@ -16,6 +18,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _nationalityController = TextEditingController();
   final TextEditingController _regionController = TextEditingController();
+  CountryCode? _selectedCountry;
 
   AuthService _authService = AuthService(); // Initialize your AuthService
 
@@ -43,18 +46,40 @@ class _RegisterScreenState extends State<RegisterScreen> {
               decoration: InputDecoration(labelText: 'Password'),
               obscureText: true,
             ),
-            TextField(
-              controller: _nationalityController,
-              decoration: InputDecoration(labelText: 'Nationality'),
+            Container(
+              decoration: const BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    color: Colors.black,
+                    width: 1.0,
+                  ),
+                ),
+              ),
+              child: ListTile(
+                title: Text('Country', style: TextStyle(color: Colors.black)),
+                subtitle: Text(_selectedCountry != null ? _selectedCountry!.name! : 'Select your country', style: TextStyle(color: Colors.black)),
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => CountrySelection(
+                      onCountrySelected: (country) {
+                        setState(() {
+                          _selectedCountry = country;
+                        });
+                      },
+                      initialSelection: _selectedCountry != null ? _selectedCountry!.code! : '',
+                    ),
+                  );
+                },
+              ),
             ),
-
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
                 String email = _emailController.text;
                 String password = _passwordController.text;
                 String name = _nameController.text;
-                String nationality = _nationalityController.text;
+                String nationality = _selectedCountry != null ? _selectedCountry!.name! : 'Portugal';
                 String region = _regionController.text;
                 String result = await _authService.registerUser(
                 email, password, name, nationality);

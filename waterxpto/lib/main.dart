@@ -15,10 +15,7 @@ import 'Controller/database.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initializeBackgroundService();
-  await NotificationController.initializeNotifications();
 
-  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await FirebaseAppCheck.instance.activate(
     // You can also use a `ReCaptchaEnterpriseProvider` provider instance as an
@@ -41,6 +38,10 @@ Future<void> main() async {
 
   WaterActivityService waterActivityService = WaterActivityService();
   //waterActivityService.addWaterActivity(WaterActivity(name: "Shower", description: "Showering wastes a lot more water than it seems", waterFlow: 10.0));
+
+  await initializeBackgroundService();
+  await NotificationController.initializeNotifications();
+
 
   var db = DatabaseHelper.instance;
   List<Map<String, dynamic>> users = await db.queryAllUsers();

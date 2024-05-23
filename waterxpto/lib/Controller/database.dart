@@ -4,7 +4,7 @@ import 'package:path/path.dart';
 
 class DatabaseHelper {
   static final _databaseName = "WaterXpto.db";
-  static final _databaseVersion = 4;
+  static final _databaseVersion = 6;
   final _waterSpentController = StreamController<double>.broadcast();
   static Database? _database;
   static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
@@ -28,9 +28,7 @@ class DatabaseHelper {
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (newVersion > oldVersion) {
-      await db.execute('''
-        ALTER TABLE WaterConsumption ADD COLUMN date TEXT;
-      ''');
+      await db.execute("ALTER TABLE Goal ADD COLUMN goalValue REAL");
     }
   }
   Future _onCreate(Database db, int version) async {
@@ -44,13 +42,15 @@ class DatabaseHelper {
       );
     ''');
     await db.execute('''
-      CREATE TABLE Goal (
-        id INTEGER PRIMARY KEY,
-        name TEXT,
-        description TEXT,
-        deadline TEXT,
-        userId INTEGER,
-        FOREIGN KEY(userId) REFERENCES User(id)
+    CREATE TABLE Goal (
+      id INTEGER PRIMARY KEY,
+      name TEXT,
+      description TEXT,
+      value REAL,
+      goalValue REAL,
+      creationDate TEXT,
+      deadline TEXT,
+      type TEXT
       );
     ''');
     await db.execute('''
@@ -218,6 +218,14 @@ class DatabaseHelper {
       yearData[index] = row['Total'] as double? ?? 0.0;
     }
     return yearData;
+  }
+
+  Future<bool> verifyGoal(Map<String, dynamic> goal) async {
+    Database db = await instance.database;
+    if (goal['type'] == 'Spend at most X liters') {
+      return goal['value'] <= goal['goalValue'];
+    }
+    return false;
   }
 
 }

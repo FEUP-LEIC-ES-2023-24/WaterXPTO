@@ -5,10 +5,10 @@ import '../Controller/database.dart';
 
 class UserData extends StatefulWidget {
   @override
-  _UserDataState createState() => _UserDataState();
+  UserDataState createState() => UserDataState();
 }
 
-class _UserDataState extends State<UserData> {
+class UserDataState extends State<UserData> {
   final _formKey = GlobalKey<FormState>();
   String? name, birthDate, email;
   CountryCode? nationality;

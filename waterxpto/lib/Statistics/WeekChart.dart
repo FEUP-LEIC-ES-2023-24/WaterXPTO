@@ -26,7 +26,7 @@ class _WeekChartState extends State<WeekChart> {
         BarChartData(
 
             minY: 0,
-            maxY: 100,
+            maxY: 60,
 
             barTouchData: BarTouchData(
                 touchTooltipData: BarTouchTooltipData(

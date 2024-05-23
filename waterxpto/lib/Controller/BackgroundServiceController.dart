@@ -6,8 +6,11 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:waterxpto/models/User.dart';
 
+import '../models/Goal.dart';
 import 'NotificationController.dart';
+import 'database.dart';
 
 
 class BackgroundServiceController {
@@ -97,6 +100,7 @@ Future<void> onActionReceivedMethod(ReceivedAction receivedAction) async {
 @pragma('vm:entry-point')
 void onStart(ServiceInstance service) async {
   DartPluginRegistrant.ensureInitialized();
+  DatabaseHelper _dbHelper = DatabaseHelper.instance;
 
   if (service is AndroidServiceInstance) {
     service.on('setAsForeground').listen((event) {
@@ -113,7 +117,28 @@ void onStart(ServiceInstance service) async {
   });
 
     //Inicia o timer para notificacoes
-    Timer.periodic(const Duration(seconds: 10000), (timer) async {
+    Timer.periodic(const Duration(seconds: 5), (timer) async {
       NotificationController.randomTipNotification();
+
+      Future<bool> isLogged = AuthService().isUserLoggedIn();
+      if (await isLogged) {
+        Future<List<Map<String, dynamic>>> goals = GoalService().getGoalsByUserID(AuthService().getCurrentUser()!.userID);
+        for (var goal in await goals) {
+          if (goal['deadline'] == DateTime.now().toIso8601String().substring(0, 10)) {
+            Future<bool> completedSuccessfully = GoalService().verifyGoal(goal);
+            NotificationController.goalCompletedNotification(goal, completedSuccessfully);
+            GoalService().deleteGoal(goal['id']);
+          }
+        }
+      } else {
+        Future<List<Map<String, dynamic>>> goals = _dbHelper.queryAllGoals();
+        for (var goal in await goals) {
+          if (goal['deadline'] == DateTime.now().toIso8601String().substring(0, 10)) {
+            Future<bool> completedSuccessfully = _dbHelper.verifyGoal(goal);
+            NotificationController.goalCompletedNotification(goal, completedSuccessfully);
+            _dbHelper.deleteGoal(goal['id']);
+          }
+        }
+      }
     });
 }
