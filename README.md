@@ -194,3 +194,29 @@ At the moment, we have partially implemented some features and some pages, such 
 - [As an Unregistered User, I want to be able to create an account so that I can keep data on multiple devices.](https://github.com/orgs/FEUP-LEIC-ES-2023-24/projects/37/views/1?pane=issue&itemId=57782351)
 - [As an Unregistered User, I want to be able to have access to most of the app’s features so that I don’t have to login.](https://github.com/orgs/FEUP-LEIC-ES-2023-24/projects/37/views/1?pane=issue&itemId=56479404)
   
+### Sprint 3
+
+#### Begin
+
+![Sprint3Begin](Docs/sprint3begin.png)
+
+#### End
+
+![Sprint3End](Docs/sprint3end.png)
+
+#### What went well?
+- We were able to successfully implement the goals, multinational averages and finish real-time.
+- We were able to have the release ready in the practical class.
+
+#### What went wrong?
+- We were not able to implement the challenges.
+- We were not able to implement many tests.
+
+#### How satisfied are we with the progress?
+- We are satisfied with the progress we made, but we could have done more.
+- We are satisfied with the final result.
+
+#### Completed user stories
+- [As a User, I want to track my daily water usage in real-time so that I can become more aware of my consumption habits and make informed decisions to reduce waste.](https://github.com/orgs/FEUP-LEIC-ES-2023-24/projects/37/views/1?pane=issue&itemId=60075788)
+- [As a User, I want to compare my water usage with regional or national averages so that I understand how my consumption habits compare to others and gain motivation to further reduce my environmental impact.](https://github.com/orgs/FEUP-LEIC-ES-2023-24/projects/37/views/1?pane=issue&itemId=56479650)
+- [As a User, I want to set personalized water usage goals and targets and receive notifications when I meet or exceed these targets so that I can stay motivated to save water.](https://github.com/orgs/FEUP-LEIC-ES-2023-24/projects/37/views/1?pane=issue&itemId=56479516)
