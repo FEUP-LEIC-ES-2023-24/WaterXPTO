@@ -191,7 +191,7 @@ class _HomeContentState extends State<HomeContent> {
                   );}
                 },
               ),
-            Expanded(
+            Flexible(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: GridView.count(
@@ -289,21 +289,19 @@ class _TimerDialogState extends State<TimerDialog> {
     });
 
     return Dialog(
+      backgroundColor: Color(0xffe6f4f1),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20.0),
       ),
       child: Container(
         padding: const EdgeInsets.all(20.0),
-        height: MediaQuery
-            .of(context)
-            .size
-            .height * 0.75,
+        height: MediaQuery.of(context).size.height * 0.35,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
               'Timer: $formattedTime',
-              style: const TextStyle(fontSize: 18),
+              style: TextStyle(fontSize: 18, color: Color(0xFF003d3e)),
             ),
             const SizedBox(height: 20),
             DropdownButtonFormField<String>(
@@ -311,7 +309,7 @@ class _TimerDialogState extends State<TimerDialog> {
               items: _usageTypes.map((String type) {
                 return DropdownMenuItem<String>(
                   value: type,
-                  child: Text(type),
+                  child: Text(type, style: TextStyle(color: Color(0xFF003d3e))),
                 );
               }).toList(),
               onChanged: (String? newValue) {
@@ -332,21 +330,27 @@ class _TimerDialogState extends State<TimerDialog> {
                   onPressed: () {
                     _startOrResumeTimer();
                   },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _timerRunning && !_timerPaused ? Colors.yellow : Colors.green,
+                  ),
                   child: Text(
-                      _timerRunning && !_timerPaused ? 'Pause' : 'Start'),
+                      _timerRunning && !_timerPaused ? 'Pause' : 'Start', style: TextStyle(color: Colors.white)),
                 ),
                 ElevatedButton(
                   onPressed: () {
                     _stopTimer();
                   },
-                  child: const Text('Stop'),
+                  child: const Text('Stop', style: TextStyle(color: Colors.white)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                  ),
                 ),
               ],
             ),
             const SizedBox(height: 20),
             Text(
               'Water Spent: ${_waterSpent.toStringAsFixed(1)} liters',
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF003d3e)),
             ),
           ],
         ),
@@ -422,26 +426,25 @@ class _TimerDialogState extends State<TimerDialog> {
       _waterSpent = 0.0;
     });
   }
-
-  Future<void> _updateDatabaseWithWaterSpent(double waterSpent) async {
-    var db = DatabaseHelper.instance;
-    int id = await db.insertWaterConsumption({'waterSpent': waterSpent});
-    print('Water spent updated in database with id: $id');
-
-    List<Map<String, dynamic>> goals = await db.queryAllGoals();
-    print('Updating goals with water spent: $waterSpent\n');
-    for (var goal in goals) {
-      double new_value = goal['value'] + waterSpent;
-
-      Map<String, dynamic> newGoal = Map.from(goal);
-      newGoal['value'] = new_value;
-
-      await db.updateGoal(newGoal);
-    }
-  }
 }
 //---------------------------------------------------------
 
+Future<void> _updateDatabaseWithWaterSpent(double waterSpent) async {
+  var db = DatabaseHelper.instance;
+  int id = await db.insertWaterConsumption({'waterSpent': waterSpent});
+  print('Water spent updated in database with id: $id');
+
+  List<Map<String, dynamic>> goals = await db.queryAllGoals();
+  print('Updating goals with water spent: $waterSpent\n');
+  for (var goal in goals) {
+    double new_value = goal['value'] + waterSpent;
+
+    Map<String, dynamic> newGoal = Map.from(goal);
+    newGoal['value'] = new_value;
+
+    await db.updateGoal(newGoal);
+  }
+}
 
 Widget customButton(IconData icon, String label, BuildContext context) {
   double screenHeight = MediaQuery.of(context).size.height;
@@ -452,14 +455,14 @@ Widget customButton(IconData icon, String label, BuildContext context) {
     child: ElevatedButton(
       onPressed: () {
         if (label == 'Timer') {
-          // Show timer dialog
           showDialog(
             context: context,
             builder: (BuildContext context) {
               return const TimerDialog();
             },
-
           );
+        } else {
+          showCustomDialog(context, label, icon);
         }
       },
       style: ElevatedButton.styleFrom(
@@ -485,4 +488,126 @@ double calculateFontSize(String message) {
   if (message.length >= 100) {return 14.5;}
   if (message.length >= 75) {return 16.0;}
   return 20.0;
+}
+
+void showCustomDialog(BuildContext context, String title, IconData icon) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return CustomDialog(title: title, icon: icon);
+    },
+  );
+}
+
+class CustomDialog extends StatefulWidget {
+  final String title;
+  final IconData icon;
+
+  CustomDialog({required this.title, required this.icon});
+
+  @override
+  _CustomDialogState createState() => _CustomDialogState();
+}
+
+class _CustomDialogState extends State<CustomDialog> {
+  int minutes = 0;
+  int seconds = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: const Color(0xffe6f4f1),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20.0),
+      ),
+      child: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.all(20.0),
+          height: MediaQuery.of(context).size.height * 0.4,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                widget.title,
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF003d3e)),
+              ),
+              Icon(
+                widget.icon,
+                size: 100,
+                color: Color(0xFF003d3e),
+              ),
+              SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: TextField(
+                      onChanged: (value) {
+                        minutes = int.tryParse(value) ?? 0;
+                      },
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        labelText: 'Minutes',
+                        labelStyle: const TextStyle(color: Color(0xFF003d3e)),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: TextField(
+                      onChanged: (value) {
+                        seconds = int.tryParse(value) ?? 0;
+                      },
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        labelText: 'Seconds',
+                        labelStyle: const TextStyle(color: Color(0xFF003d3e)),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () async {
+                  if (await AuthService().isUserLoggedIn()) {
+                    WaterActivity? waterActivity = await WaterActivityService().getWaterActivity(widget.title);
+                    double waterSpent = (waterActivity!.waterFlow * (minutes + seconds / 60));
+                    WaterConsumption waterConsumption = WaterConsumption(
+                        waterActivityID: waterActivity.id,
+                        userID: AuthService().getCurrentUser()!.userID,
+                        finishDate: DateTime.now(),
+                        duration: minutes * 60 + seconds);
+                    await WaterConsumptionService().addWaterConsumption(waterConsumption);
+                    await WaterSpentNotifier.of(context, listen: false).updateTodayLitersSpent();
+                    List<Goal> goals = await GoalService().getAllGoals();
+                    for (var goal in goals) {
+                      goal.value += waterSpent;
+                      await GoalService().updateGoal(goal);
+                    }
+                  } else {
+                    WaterActivityService waterActivityService = WaterActivityService();
+                    WaterActivity? waterActivity = await waterActivityService.getWaterActivity(widget.title);
+                    double waterSpent = (waterActivity!.waterFlow * (minutes + seconds / 60));
+                    _updateDatabaseWithWaterSpent(waterSpent);
+                  }
+
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                ),
+                child: const Text('Insert', style: TextStyle(color: Colors.white)),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
