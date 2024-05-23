@@ -274,7 +274,9 @@ class _HomeContentState extends State<HomeContent> {
   }
 }
 
-//------------ Timer Dialog ---------------------
+ ////////////////////////////////////////////////////
+///------------ Timer Dialog ---------------------///
+///////////////////////////////////////////////////
 
 class TimerDialog extends StatefulWidget {
   const TimerDialog({super.key});
@@ -464,8 +466,119 @@ class _TimerDialogState extends State<TimerDialog> {
     print('Water spent updated in database with id: $id');
   }
 }
-//---------------------------------------------------------
+////////////////////////////////////////////////////////////
+// Custom Button Dialog (Shower, Dishes...) ////////////////
+///////////////////////////////////////////////////////////
 
+class ButtonDialog extends StatefulWidget {
+  final String buttonType;
+
+  const ButtonDialog({Key? key, required this.buttonType}) : super(key: key);
+
+  @override
+  _ButtonDialogState createState() => _ButtonDialogState();
+}
+
+class _ButtonDialogState extends State<ButtonDialog> {
+  final WaterConsumptionService waterService = WaterConsumptionService();
+  final AuthService authService = AuthService();
+  final WaterActivityService waterActivityService = WaterActivityService();
+
+  int _timeInMinutes = 0;
+  double _waterSpent = 0.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20.0),
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(20.0),
+        height: MediaQuery.of(context).size.height * 0.45,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              'Time Spent (${widget.buttonType})',
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, fontFamily: 'Roboto'),
+            ),
+            const SizedBox(height: 20),
+            TextFormField(
+              keyboardType: TextInputType.number,
+              onChanged: (value) {
+                setState(() {
+                  _timeInMinutes = int.tryParse(value) ?? 0;
+                  _calculateWaterSpent();
+                });
+              },
+              decoration: const InputDecoration(
+                labelText: 'Minutes',
+                border: OutlineInputBorder(),
+                labelStyle: TextStyle(fontSize: 18, fontFamily: 'Roboto'),
+              ),
+              style: const TextStyle(fontSize: 18, fontFamily: 'Roboto'),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () async {
+                await _addActivity();
+                Navigator.pop(context);
+              },
+              child: const Text(
+                'Add Activity',
+                style: TextStyle(fontSize: 18, fontFamily: 'Roboto'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _calculateWaterSpent() async {
+    WaterActivity? waterActivity = await waterActivityService.getWaterActivity(widget.buttonType);
+    if (waterActivity != null) {
+      setState(() {
+        _waterSpent = _timeInMinutes * waterActivity.waterFlow;
+      });
+    } else {
+      setState(() {
+        _waterSpent = 0.0;
+      });
+    }
+  }
+
+  Future<void> _addActivity() async {
+    if (_timeInMinutes > 0) {
+      bool isLoggedIn = await authService.isUserLoggedIn();
+      if (isLoggedIn) {
+        WaterActivity? waterActivity = await waterActivityService.getWaterActivity(widget.buttonType);
+        WaterConsumption waterConsumption = WaterConsumption(
+          waterActivityID: waterActivity!.id,
+          userID: authService.getCurrentUser()!.userID,
+          finishDate: DateTime.now(),
+          duration: _timeInMinutes,
+        );
+        await waterService.addWaterConsumption(waterConsumption);
+        await WaterSpentNotifier.of(context, listen: false).updateTodayLitersSpent();
+      } else {
+        await _updateDatabaseWithActivity();
+      }
+    }
+  }
+
+  Future<void> _updateDatabaseWithActivity() async {
+    var db = DatabaseHelper.instance;
+    int id = await db.insertWaterConsumption({'waterSpent': _waterSpent});
+    print('Activity time updated in database with id: $id');
+  }
+}
+
+
+
+
+///////////////////////////////////////////////////////////
 
 Widget customButton(IconData icon, String label, BuildContext context) {
   double screenHeight = MediaQuery.of(context).size.height;
@@ -482,10 +595,15 @@ Widget customButton(IconData icon, String label, BuildContext context) {
             builder: (BuildContext context) {
               return const TimerDialog();
             },
-
+          );
+        } else {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return ButtonDialog(buttonType: label);
+            },
           );
         }
-
       },
       style: ElevatedButton.styleFrom(
         foregroundColor: Colors.white,
@@ -504,6 +622,7 @@ Widget customButton(IconData icon, String label, BuildContext context) {
     ),
   );
 }
+
 
 double calculateFontSize(String message) {
   if (message.length > 125) {return 13.0;}
