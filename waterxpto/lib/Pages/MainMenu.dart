@@ -11,6 +11,8 @@ import 'Goals.dart';
 import 'Settings.dart';
 import '../Controller/WaterSpentNotifier.dart';
 import 'dart:async';
+import 'LoginScreen.dart';
+
 
 class MainMenu extends StatefulWidget {
   const MainMenu({super.key});
@@ -44,6 +46,15 @@ class _MainMenuState extends State<MainMenu> {
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
+        leading: IconButton(
+          icon: Icon(Icons.person, color: Colors.black),  // Add the user icon
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => LoginScreen()),
+            );
+          },
+        ),
       ),
       body: _widgetOptions[_selectedIndex],
 
