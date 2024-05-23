@@ -7,7 +7,6 @@ import 'package:waterxpto/models/WaterConsumption.dart';
 import '../Statistics/StatisticsContent.dart';
 import '../Controller/database.dart';
 import '../models/Goal.dart';
-import 'Challenge.dart';
 import 'Goals.dart';
 import 'Settings.dart';
 import '../Controller/WaterSpentNotifier.dart';
@@ -27,7 +26,6 @@ class _MainMenuState extends State<MainMenu> {
   static  final List<Widget> _widgetOptions = <Widget>[
     const HomeContent(),
     StatisticsContent(),
-    const Challenge(),
     Goals(),
     SettingsPage(),
   ];
@@ -61,10 +59,6 @@ class _MainMenuState extends State<MainMenu> {
           BottomNavigationBarItem(
             icon: Icon(Icons.insert_chart),
             label: 'Statistics',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.supervised_user_circle_sharp),
-            label: 'Challenges',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.emoji_events_sharp),

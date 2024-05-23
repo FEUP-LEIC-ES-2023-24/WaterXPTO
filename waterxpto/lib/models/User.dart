@@ -26,6 +26,7 @@ class WaterUser {
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  String? nationality;
 
   Future<bool> isUserLoggedIn() async {
     var user = _auth.currentUser;
@@ -43,6 +44,8 @@ class AuthService {
 
       // Get user id
       String userId = userCredential.user!.uid;
+
+      this.nationality = nationality;
 
       // Store additional user data in Firestore
       await _firestore.collection('users').doc(userId).set({
@@ -64,6 +67,14 @@ class AuthService {
         email: email,
         password: password,
       );
+
+      User? currentUser = _auth.currentUser;
+      if (currentUser != null) {
+        DocumentSnapshot userDoc = await _firestore.collection('users').doc(currentUser.uid).get();
+        this.nationality = userDoc.get('nationality');
+        print('Fetched nationality: ${this.nationality}');
+      }
+
       return "Sign in successful";
     } catch (e) {
       return e.toString();
@@ -79,7 +90,7 @@ class AuthService {
   WaterUser? getCurrentUser() {
     User? currentUser = _auth.currentUser;
     return currentUser != null
-        ? WaterUser(userID: currentUser.uid, email: currentUser.email!, password: "", name: "",  nationality: "", )
+        ? WaterUser(userID: currentUser.uid, email: currentUser.email!, password: "", name: "",  nationality: this.nationality ?? "", )
         : null;
   }
 }
